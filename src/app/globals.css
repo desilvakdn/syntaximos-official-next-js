@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --synblack: #101010;
+  --synwhite: #ffffff;
+  --synblue: #2d5bff;
+  --syngold: #ecbe1c;
+}
+
+body {
+  background-color: #101010;
+  color: #ffffff;
+  font-weight: 600;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
+}
+h3 {
+  font-size: 1.17em;
+  margin: 0.83em 0;
+}
+h5 {
+  font-size: 0.83em;
+  margin: 1.5em 0;
+}
+h6 {
+  font-size: 0.75em;
+  margin: 1.67em 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bolder;
+}
+
+button {
+  background-color: var(--synwhite);
+  color: var(--synblack);
+  padding: 0.5rem;
+  border-radius: 3px;
+  transition: all 0.3s ease-in;
+}
+button:hover {
+  background-color: var(--synblue);
+  color: var(--synwhite);
+}
+
+input {
+  background-color: var(--synwhite);
+  color: var(--synblack);
+  padding: 0.5rem;
+  border-radius: 3px;
+  transition: all 0.3s ease-in;
+  outline: none;
+  border: none;
+  width: 100%;
+}
+
+.gradientanimation {
+  background: linear-gradient(32deg, #101010, #112b4d, #101010);
+  background-size: 600% 600%;
+  -webkit-animation: AnimationName 19s ease infinite;
+  -moz-animation: AnimationName 19s ease infinite;
+  -o-animation: AnimationName 19s ease infinite;
+  animation: AnimationName 19s ease infinite;
+}
+@-webkit-keyframes AnimationName {
+  0% {
+    background-position: 87% 0%;
+  }
+  50% {
+    background-position: 14% 100%;
+  }
+  100% {
+    background-position: 87% 0%;
+  }
+}
+@-moz-keyframes AnimationName {
+  0% {
+    background-position: 87% 0%;
+  }
+  50% {
+    background-position: 14% 100%;
+  }
+  100% {
+    background-position: 87% 0%;
+  }
+}
+@-o-keyframes AnimationName {
+  0% {
+    background-position: 87% 0%;
+  }
+  50% {
+    background-position: 14% 100%;
+  }
+  100% {
+    background-position: 87% 0%;
+  }
+}
+@keyframes AnimationName {
+  0% {
+    background-position: 87% 0%;
+  }
+  50% {
+    background-position: 14% 100%;
+  }
+  100% {
+    background-position: 87% 0%;
+  }
+}
+
+@keyframes SlideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes SlideIn0 {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes SlideInDown0Pop {
+  from {
+    transform: translate(-50%, 20%);
+    opacity: 0.3;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes SlideInMiddle {
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0.3;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+.SlideIn {
+  animation: SlideIn 0.5s ease-in-out;
+}
+
+.SlideIn0 {
+  animation: SlideIn0 0.5s ease-in-out;
+}
+
+.SlideInDown0Pop {
+  animation: SlideInDown0Pop 0.5s ease-in-out;
+}
+
+.SlideInMiddle {
+  animation: SlideInMiddle 0.5s ease-in-out;
+}
+
+.floating {
+  animation-name: floating;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  margin-left: 30px;
+  margin-top: 5px;
+}
+
+@keyframes floating {
+  0% {
+    transform: translate(0, 0px);
+  }
+  50% {
+    transform: translate(0, 15px);
+  }
+  100% {
+    transform: translate(0, -0px);
+  }
+}
+
+.blackgradient {
+  background: rgb(24, 24, 27);
+  background: linear-gradient(
+    0deg,
+    rgba(24, 24, 27, 1) 0%,
+    rgba(24, 24, 27, 0) 66%
+  );
+}
