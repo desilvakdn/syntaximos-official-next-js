@@ -29,9 +29,9 @@ function HeroExtensionSection({ data }: { data: Extension }) {
   const { push } = useRouter();
   let rating = data.rating;
   return (
-    <div className="relative w-full min-h-[30vw]">
-      <div className="absolute z-[2] top-0 bottom-0 left-0 right-0 flex flex-row gap-2 justify-between items-center w-full min-h-[30vw]">
-        <motion.div layout className="flex flex-col gap-1 flex-grow">
+    <div className="relative w-full  p-2">
+      <div className="relative z-[2] flex flex-col lg:flex-row gap-2 justify-between items-center w-full ">
+        <motion.div layout className="flex flex-col gap-1 flex-grow ">
           <motion.label
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -45,7 +45,7 @@ function HeroExtensionSection({ data }: { data: Extension }) {
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.2, ease: "backInOut" }}
-              className="text-[50px] m-0 p-0"
+              className="text-[35px] sm:text-[50px] m-0 p-0 transition-all"
             >
               {data.title}
             </motion.h1>
@@ -53,7 +53,7 @@ function HeroExtensionSection({ data }: { data: Extension }) {
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.3, ease: "backInOut" }}
-              className="m-0 p-0 text-synblue"
+              className="m-0 p-0 text-synblue text-base sm:text-lg transition-all"
             >
               {data.tagline}
             </motion.h3>
@@ -71,7 +71,7 @@ function HeroExtensionSection({ data }: { data: Extension }) {
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
-            className="max-w-[700px] opacity-55"
+            className="max-w-[700px] opacity-55 text-justify"
           >
             {data.description}
           </motion.p>
@@ -172,14 +172,14 @@ function HeroExtensionSection({ data }: { data: Extension }) {
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
-          className="flex flex-grow "
+          className="flex-grow w-full flex justify-center"
         >
           <Image
-            className="floating"
+            className="floating ml-0  mt-2 "
             src={data.heroimg}
             alt={`${data.title}_workflow`}
             width={800}
-            height={400}
+            height={600}
             quality={100}
             loading="lazy"
           />

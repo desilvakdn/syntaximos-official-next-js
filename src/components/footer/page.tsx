@@ -41,7 +41,7 @@ function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-8">
             <div className="flex flex-col justify-center items-center text-center md:justify-start md:items-start md:text-left">
               <h2>Syntaximos</h2>
-              <p className="lg:mr-36 opacity-50 pr-[25px] lg:pr-0">
+              <p className="lg:mr-36 opacity-50 pr-[25px] lg:pr-0 text-justify">
                 Discover secure, time-saving Chrome extensions that automate
                 tasks, unlock web features, and supercharge productivity. Trust
                 in our commitment to safety and data protection. Try now and

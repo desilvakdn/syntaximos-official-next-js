@@ -8,7 +8,7 @@ function QAHolder({ question, answer }: { question: string; answer: string }) {
   return (
     <motion.div
       layout
-      className="lg:max-w-[970px] lg:min-w-[900px] bg-zinc-800 p-4 rounded cursor-pointer transition-all hover:brightness-125"
+      className="w-full lg:max-w-[970px] lg:min-w-[900px] bg-zinc-800 p-4 rounded cursor-pointer transition-all hover:brightness-125"
       onClick={() => (clicked === false ? setclicked(true) : setclicked(false))}
     >
       <div className="flex flex-row justify-between items-center">

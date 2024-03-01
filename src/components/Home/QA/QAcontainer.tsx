@@ -22,29 +22,30 @@ function QAcontainer({ qacontainer }: { qacontainer: QADetails }) {
   }, [selected, qacontainer.data]);
 
   return (
-    <div className="m-10 grid grid-cols-1 gap-3">
-      {qa.map((item, index) => (
-        <QAHolder key={index} question={item.question} answer={item.answer} />
-      ))}
-
-      <div>
-        {selected ? (
-          <motion.button
-            layout
-            className="w-fit px-10"
-            onClick={() => setselected(false)}
-          >
-            <label htmlFor="">View Less</label>
-          </motion.button>
-        ) : (
-          <motion.button
-            layout
-            className="w-fit px-10"
-            onClick={() => setselected(true)}
-          >
-            <label htmlFor="">View All</label>
-          </motion.button>
-        )}
+    <div className="mt-10 grid grid-cols-1 gap-3 w-full justify-center items-center">
+      <div className="w-full flex justify-center flex-col gap-3 items-center">
+        {qa.map((item, index) => (
+          <QAHolder key={index} question={item.question} answer={item.answer} />
+        ))}
+        <div>
+          {selected ? (
+            <motion.button
+              layout
+              className="w-fit px-10"
+              onClick={() => setselected(false)}
+            >
+              <label htmlFor="">View Less</label>
+            </motion.button>
+          ) : (
+            <motion.button
+              layout
+              className="w-fit px-10"
+              onClick={() => setselected(true)}
+            >
+              <label htmlFor="">View All</label>
+            </motion.button>
+          )}
+        </div>
       </div>
     </div>
   );

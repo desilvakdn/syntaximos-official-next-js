@@ -9,10 +9,8 @@ function HowItWorks() {
         your gig rankings. So here&apos;s a brief showcase
       </label>
       <div className="w-full flex flex-col justify-center items-center">
-        <div className="rounded-2xl overflow-hidden">
+        <div className="mt-9 rounded-2xl overflow-hidden w-full aspect-w-16 aspect-h-9">
           <iframe
-            width="1000"
-            height="600"
             src="https://www.youtube.com/embed/nIwNEopJiBI?si=sj6t4ZpeGgK4s8TE"
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
