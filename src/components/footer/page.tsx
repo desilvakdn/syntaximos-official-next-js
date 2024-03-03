@@ -82,9 +82,12 @@ function Footer() {
             <div className="flex flex-col items-center md:items-start">
               <h3>Extensions</h3>
               <ul>
-                {extensiondata.map((item) => {
+                {extensiondata.map((item, index) => {
                   return (
-                    <li onClick={() => push(`/extensions/${item.identifier}`)}>
+                    <li
+                      key={index}
+                      onClick={() => push(`/extensions/${item.identifier}`)}
+                    >
                       <label
                         htmlFor=""
                         className="hover:scale-[1.1] transition-all hover:text-synblue cursor-pointer"
