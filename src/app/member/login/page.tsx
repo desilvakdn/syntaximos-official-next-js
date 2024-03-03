@@ -32,6 +32,7 @@ function Login() {
     password: "",
     passresetemail: "",
   });
+  const [emailwp, setemailwp] = useState("");
 
   async function submit() {
     setProperties({ ...properties, issubmitclicked: true });
@@ -74,7 +75,15 @@ function Login() {
             .then((data) => {
               setProperties({ ...properties, isloading: false });
               console.log(data);
-              if (data.status) {
+
+              if (!data.status && data.setup) {
+                setProperties({
+                  ...properties,
+                  ispassresetneed: true,
+                  passresetemail: data.email,
+                });
+                setemailwp(data.email);
+              } else if (data.status) {
                 setCookie("syn_a", data.tokens.accesstoken);
                 setCookie("syn_r", data.tokens.refreshtoken);
                 setProperties({ ...properties, issuccesslogin: "valid" });
@@ -106,7 +115,12 @@ function Login() {
 
   function sendpasswordreset() {
     setProperties({ ...properties, ispassresetclicked: true });
-    if (properties.ispasswordresetsending || !properties.passresetemail) {
+    if (
+      properties.ispasswordresetsending ||
+      !properties.passresetemail ||
+      !emailwp
+    ) {
+      console.log("hi i'm there");
       return;
     }
     setProperties({ ...properties, ispasswordresetsending: true });
@@ -117,7 +131,7 @@ function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: properties.passresetemail,
+        email: properties.passresetemail || emailwp,
       }),
     })
       .then((res) => res.json())
@@ -158,24 +172,39 @@ function Login() {
             You will receive an email if your account is available in our system
           </p>
           <div className="SlideIn0 min-w-[95%] md:min-w-[600px] mt-4 flex flex-col gap-2 justify-center items-center">
-            <input
-              className={`${
-                properties.ispassresetclicked && !properties.passresetemail
-                  ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
-                  : ""
-              }`}
-              onChange={(e) =>
-                setProperties({
-                  ...properties,
-                  passresetemail: e.target.value,
-                })
-              }
-              type="text"
-              name=""
-              id=""
-              placeholder="Enter Your Email"
-              value={properties.passresetemail}
-            />
+            {emailwp ? (
+              <input
+                className={`${
+                  properties.ispassresetclicked && !emailwp
+                    ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
+                    : ""
+                }`}
+                disabled={true}
+                type="text"
+                name=""
+                id=""
+                value={emailwp}
+              />
+            ) : (
+              <input
+                className={`${
+                  properties.ispassresetclicked && !properties.passresetemail
+                    ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
+                    : ""
+                }`}
+                onChange={(e) =>
+                  setProperties({
+                    ...properties,
+                    passresetemail: e.target.value,
+                  })
+                }
+                type="text"
+                name=""
+                id=""
+                placeholder="Enter Your Email"
+                value={properties.passresetemail}
+              />
+            )}
             <button
               onClick={sendpasswordreset}
               className={`w-full flex flex-row gap-2 items-center justify-center py-[15px] ${

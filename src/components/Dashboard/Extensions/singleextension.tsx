@@ -4,6 +4,7 @@ import Config from "@/resources/config";
 import {
   Check,
   CrownSimple,
+  Key,
   NavigationArrow,
   PlusCircle,
   Sparkle,
@@ -13,7 +14,8 @@ import {
 import { getCookie } from "cookies-next";
 import Image from "next/image";
 import Link from "next/link";
-import React, { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 function SingleExtension({
   item,
@@ -24,6 +26,8 @@ function SingleExtension({
   setpopupinstall: React.Dispatch<React.SetStateAction<boolean>>;
   setexturl: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const { push } = useRouter();
+
   const [props, setProps] = useState({
     check: true,
     isloadingaddfree: false,
@@ -140,7 +144,10 @@ function SingleExtension({
             </button>
           </Link>
         )}
-        <button className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center">
+        <button
+          onClick={() => push(`/extensions/${item.identifier}`)}
+          className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
+        >
           <NavigationArrow size={22} weight="bold" />
           See More
         </button>

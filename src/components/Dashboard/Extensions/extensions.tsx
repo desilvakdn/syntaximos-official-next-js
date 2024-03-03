@@ -6,6 +6,8 @@ import SingleExtension from "./singleextension";
 import Image from "next/image";
 import { Check, X } from "@phosphor-icons/react/dist/ssr";
 import Config from "@/resources/config";
+import Timer from "@/modules/timer";
+import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 
 interface Extension {
   added: boolean;
@@ -21,11 +23,20 @@ interface Extension {
 }
 
 function ExtensionsDashboard() {
+  const { openpopup } = useGlobalPopup();
   const [ext, setExt] = useState<Extension[]>([]);
   const [loading, setLoading] = useState(true);
   const [popupinstall, setPopupinstall] = useState(false);
   const [extlink, setExtlink] = useState("");
   const [copied, setCopied] = useState(false);
+
+  const [requestkeypopup, setrequestkeypopup] = useState(false);
+  const [activeextension, setactiveextension] = useState("");
+  const [activeextensionid, setactiveextensionid] = useState("");
+  const [secretkey, setsecretkey] = useState("");
+  const [secretkeyloading, setsecretkeyloading] = useState(false);
+  const [requestedkey, setrequestedkey] = useState(false);
+  const [keyschecker, setkeyschecker] = useState(true);
 
   useEffect(() => {
     let accesstoken = getCookie("syn_a");

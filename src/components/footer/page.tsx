@@ -5,14 +5,45 @@ import {
   TwitterLogo,
   YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../SingleWrappers/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
+import Config from "@/resources/config";
+
+interface ExtDetailsResponse {
+  status: boolean;
+  data: any[]; // Change `any` to a more specific type if possible
+}
+
+interface ExtensionData {
+  name: any;
+  identifier: any;
+}
 
 function Footer() {
   const { isloggedin, userid } = useContext(AuthContext);
   const pathname = usePathname();
   const { push } = useRouter();
+  const [extensiondata, setextensiondata] = useState<ExtensionData[]>([]);
+  const [hasmoreext, sethasmoreext] = useState(false);
+
+  useEffect(() => {
+    fetch(`${Config().api}/web/extensions`)
+      .then((i) => i.json())
+      .then((data: ExtDetailsResponse) => {
+        if (data.status) {
+          let r = data.data.map((item) => ({
+            name: item.name,
+            identifier: item.identifier,
+          }));
+          r = shuffleArray(r);
+          if (r.length > 4) {
+            sethasmoreext(true);
+          }
+          setextensiondata(r.length > 4 ? r.slice(4) : r);
+        }
+      });
+  }, []);
 
   let legal = [
     {
@@ -51,10 +82,22 @@ function Footer() {
             <div className="flex flex-col items-center md:items-start">
               <h3>Extensions</h3>
               <ul>
-                <li>
-                  <label htmlFor="">Fiverr Mate</label>
-                </li>
+                {extensiondata.map((item) => {
+                  return (
+                    <li onClick={() => push(`/extensions/${item.identifier}`)}>
+                      <label
+                        htmlFor=""
+                        className="hover:scale-[1.1] transition-all hover:text-synblue cursor-pointer"
+                      >
+                        {item.name}
+                      </label>
+                    </li>
+                  );
+                })}
               </ul>
+              {hasmoreext && (
+                <button className="p-0 px-5 py-1 mt-2">view All</button>
+              )}
             </div>
             <div className="flex flex-col md:items-start items-center ">
               <h3>Legal</h3>
@@ -120,3 +163,23 @@ function Footer() {
 }
 
 export default Footer;
+
+function shuffleArray(array: any[]) {
+  let currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}

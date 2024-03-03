@@ -8,6 +8,7 @@ import {
   Check,
   CrownSimple,
   Fan,
+  Key,
   NavigationArrow,
   PlusCircle,
   Sparkle,
@@ -23,9 +24,19 @@ import React, { useEffect, useState } from "react";
 function SingleAddon({
   item,
   cancelsub,
+  setactiveextension,
+  setactiveextensionid,
+  setsecretkey,
+  setkeyschecker,
+  setrequestkeypopup,
 }: {
   item: any;
   cancelsub: () => void;
+  setrequestkeypopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setkeyschecker: React.Dispatch<React.SetStateAction<boolean>>;
+  setactiveextension: React.Dispatch<React.SetStateAction<string>>;
+  setactiveextensionid: React.Dispatch<React.SetStateAction<string>>;
+  setsecretkey: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const { push } = useRouter();
   const { openpopup } = useGlobalPopup();
@@ -44,6 +55,28 @@ function SingleAddon({
   const [iscancelatend, setIscancelatend] = useState(false);
 
   const [iscancellingpremium, setIscancellingpremium] = useState(false);
+
+  useEffect(() => {
+    let accesstoken = getCookie("syn_a");
+    fetch(`${Config().api}/dashboard/pastkey/${item.identifier}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accesstoken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setkeyschecker(false);
+        if (data.refresh) {
+          window.location.reload();
+        } else if (data.status) {
+          setsecretkey(data.key);
+        } else {
+          setsecretkey("");
+        }
+      });
+  }, []);
 
   function RemoveExtension(identifier: string, ispremium: boolean) {
     if (props.isloadingremove) {
@@ -278,9 +311,16 @@ function SingleAddon({
               <CrownSimple size={22} weight="bold" /> Subscribe
             </button>
           )}
-          <button className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center">
-            <NavigationArrow size={22} weight="bold" />
-            See More
+          <button
+            onClick={() => {
+              setrequestkeypopup(true);
+              setactiveextension(item.name);
+              setactiveextensionid(item.identifier);
+            }}
+            className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
+          >
+            <Key size={22} weight="bold" />
+            Get Login Key
           </button>
         </div>
       </div>
