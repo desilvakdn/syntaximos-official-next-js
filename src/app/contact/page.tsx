@@ -3,7 +3,7 @@ import LoadingDots from "@/components/Animations/LoadingDots/page";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import { Lightning } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Config from "@/resources/config";
 
@@ -220,6 +220,7 @@ function Contact() {
             }
           />
         </div>
+
         <div>
           <label htmlFor="">Subject *</label>
           <input
