@@ -17,11 +17,16 @@ function WelcomeExtId({ params }: { params: { extid: String } }) {
   useEffect(() => {
     fetch(`${Config().api}/web/extensions/${params.extid}`)
       .then((e) => e.json())
-      .then((data) => {
+      .then((data: any) => {
         if (data.status) {
           setisinit(false);
           setisvalidext(true);
           setextname(data.extension);
+          setextdetails({
+            ...extdetails,
+            youtubeurl: data.data.setupurl,
+            reviewurl: data.data.reviewurl,
+          });
         } else {
           setisinit(false);
           setisvalidext(false);
@@ -44,7 +49,15 @@ function WelcomeExtId({ params }: { params: { extid: String } }) {
           <h3 className="opacity-95 m-0 p-0">Thanks For Installing</h3>
           <h1 className="p-0 m-0 text-5xl text-synblue mb-5">{extname}</h1>
           <label htmlFor="">{`You Should Watch The Following Video To Setup ${extname} Properly`}</label>
-          <div className="min-w-[1000px] min-h-[600px] bg-zinc-700 mt-10 rounded"></div>
+          <div className="w-full flex flex-col justify-center items-center">
+            <div className="mt-9 rounded-2xl overflow-hidden w-full aspect-w-16 aspect-h-9">
+              <iframe
+                src={extdetails.youtubeurl}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              ></iframe>
+            </div>
+          </div>
           <div className="mt-10 flex flex-col justify-center items-center">
             <PricingSection extid={params.extid} />
             <div className="bg-zinc-800 border-2 border-solid border-zinc-600 w-[1000px] rounded p-5 py-10 flex flex-col justify-center items-center">

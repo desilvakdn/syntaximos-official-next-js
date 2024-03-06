@@ -164,6 +164,9 @@ function VerifyMe({ params }: { params: { token: string } }) {
                 transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
                 htmlFor=""
                 className="mt-5 hover:underline transition-all cursor-pointer hover:opacity-70"
+                onClick={() =>
+                  window.open("https://youtu.be/NSHB0JrciS0", "_blank")
+                }
               >
                 How To Get My Login Key?
               </motion.label>

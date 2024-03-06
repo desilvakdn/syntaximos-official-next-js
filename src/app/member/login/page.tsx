@@ -76,7 +76,13 @@ function Login() {
               setProperties({ ...properties, isloading: false });
               console.log(data);
 
-              if (!data.status && data.setup) {
+              if (!data.status && data.nonverified) {
+                openpopup(
+                  "You're Not Verified. Please Verify Your Email First",
+                  false
+                );
+                push(`/member/verify/email/${data.id_}.${data.token}`);
+              } else if (!data.status && data.setup) {
                 setProperties({
                   ...properties,
                   ispassresetneed: true,

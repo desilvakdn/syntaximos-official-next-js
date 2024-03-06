@@ -1,6 +1,6 @@
 import React from "react";
 
-function HowItWorks() {
+function HowItWorks({ ytlink }: { ytlink: string }) {
   return (
     <div className="flex flex-col gap-2  w-full min-h-[30vw] items-center justify-center my-10">
       <h1 className="text-4xl">How It&apos;s Work</h1>
@@ -11,7 +11,7 @@ function HowItWorks() {
       <div className="w-full flex flex-col justify-center items-center">
         <div className="mt-9 rounded-2xl overflow-hidden w-full aspect-w-16 aspect-h-9">
           <iframe
-            src="https://www.youtube.com/embed/nIwNEopJiBI?si=sj6t4ZpeGgK4s8TE"
+            src={ytlink}
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           ></iframe>

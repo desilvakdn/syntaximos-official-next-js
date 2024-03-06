@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
   function setloading(status: boolean) {
     setTimeout(() => {
       setIsloading(status);
-    }, 2000);
+    }, 1000);
   }
 
   useEffect(() => {
