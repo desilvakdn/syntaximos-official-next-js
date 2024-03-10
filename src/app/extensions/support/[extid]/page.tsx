@@ -39,7 +39,7 @@ async function Support({ params }: { params: { extid: String } }) {
           ) : (
             <>
               <div>
-                Looks Like There's Not Support Videos Available For This
+                Looks Like There&apos;s Not Support Videos Available For This
                 Extension At The Moment
               </div>
             </>
