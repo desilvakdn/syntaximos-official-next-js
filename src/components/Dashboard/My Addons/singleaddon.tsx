@@ -15,6 +15,7 @@ import {
   Star,
   Trash,
   User,
+  YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";
 import Image from "next/image";
@@ -272,10 +273,10 @@ function SingleAddon({
         <label htmlFor="" className="opacity-60">
           {item.description}
         </label>
-        <div className="mt-3 flex flex-row gap-2 w-full">
+        <div className="mt-3 flex flex-row gap-2 w-full flex-wrap">
           <button
             onClick={() => RemoveExtension(item.identifier, item.premium)}
-            className="bg-synblue text-synwhite flex flex-row gap-1 items-center justify-center hover:bg-blue-800"
+            className="bg-synblue text-synwhite flex flex-row gap-1 items-center justify-center hover:bg-blue-800 flex-grow"
           >
             {props.isloadingremove ? (
               <>
@@ -291,7 +292,7 @@ function SingleAddon({
           {item.premium ? (
             <button
               onClick={ManagePremium}
-              className="bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900"
+              className="flex-grow bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900"
             >
               {iscancellingpremium ? (
                 <>
@@ -306,7 +307,7 @@ function SingleAddon({
           ) : (
             <button
               onClick={() => push(`/extensions/pricing/${item.identifier}`)}
-              className="bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900"
+              className="flex-grow bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900"
             >
               <CrownSimple size={22} weight="bold" /> Subscribe
             </button>
@@ -317,10 +318,17 @@ function SingleAddon({
               setactiveextension(item.name);
               setactiveextensionid(item.identifier);
             }}
-            className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
+            className="flex-grow bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
           >
             <Key size={22} weight="bold" />
             Get Login Key
+          </button>
+          <button
+            onClick={() => push(`/extensions/support/${item.identifier}`)}
+            className="flex-grow bg-rose-600 hover:bg-rose-800 text-synwhite flex flex-row gap-1 items-center justify-center"
+          >
+            <YoutubeLogo size={22} weight="bold" />
+            Support Guide
           </button>
         </div>
       </div>

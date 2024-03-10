@@ -112,15 +112,15 @@ function SingleExtension({
       <label htmlFor="" className="opacity-60">
         {item.description}
       </label>
-      <div className="mt-3 flex flex-row gap-2 w-full">
+      <div className="mt-3 flex flex-row gap-2 w-full flex-wrap">
         {item.added ? (
-          <button className="bg-lime-600 text-lime-900 flex flex-row gap-1 items-center justify-center hover:bg-lime-600 hover:text-lime-900 hover:cursor-default">
+          <button className="flex-grow bg-lime-600 text-lime-900 flex flex-row gap-1 items-center justify-center hover:bg-lime-600 hover:text-lime-900 hover:cursor-default">
             <Check size={22} weight="bold" /> Added
           </button>
         ) : (
           <button
             onClick={() => AddExtensionFree(item.identifier)}
-            className="bg-synblue text-synwhite flex flex-row gap-1 items-center justify-center hover:bg-blue-800"
+            className="flex-grow bg-synblue text-synwhite flex flex-row gap-1 items-center justify-center hover:bg-blue-800"
           >
             {props.isloadingaddfree ? (
               <>
@@ -134,19 +134,19 @@ function SingleExtension({
           </button>
         )}
         {item.premium ? (
-          <button className="bg-slate-400 text-slate-600 flex flex-row gap-1 items-center justify-center hover:bg-slate-400 hover:text-slate-600 hover:cursor-default">
+          <button className="flex-grow bg-slate-400 text-slate-600 flex flex-row gap-1 items-center justify-center hover:bg-slate-400 hover:text-slate-600 hover:cursor-default">
             <Sparkle size={22} weight="bold" /> Subscribed
           </button>
         ) : (
           <Link href={`/extensions/pricing/${item.identifier}`}>
-            <button className="bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900">
+            <button className="flex-grow bg-syngold text-amber-900 flex flex-row gap-1 items-center justify-center hover:bg-orange-400 hover:text-amber-900">
               <CrownSimple size={22} weight="bold" /> Get Premium
             </button>
           </Link>
         )}
         <button
           onClick={() => push(`/extensions/${item.identifier}`)}
-          className="bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
+          className="flex-grow bg-synblack text-synwhite flex flex-row gap-1 items-center justify-center"
         >
           <NavigationArrow size={22} weight="bold" />
           See More
