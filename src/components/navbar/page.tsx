@@ -20,13 +20,13 @@ function NavBar() {
 
   return (
     <>
-      {((isloggedin &&
+      {!(
+        isloggedin &&
         userid &&
         !isloading &&
-        !pathname.includes("/member/dashboard")) ||
-        (!isloggedin &&
-          !isloading &&
-          !pathname.includes("/member/dashboard"))) && (
+        (pathname.includes("/member/dashboard") ||
+          pathname.includes("/admin/dashboard"))
+      ) && (
         <div className="flex flex-col gap-6 mb-8 justify-between items-center md:flex-row md:gap-0 md:mb-4 p-[1.3rem]">
           <Link href="/">
             <h2 className={`${styles.sitetitle} m-0 p-0`}>Syntaximos</h2>

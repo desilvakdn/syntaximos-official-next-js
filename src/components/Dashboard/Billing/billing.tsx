@@ -1,6 +1,7 @@
 "use client";
 import {
   DotsThreeOutline,
+  Money,
   PlusCircle,
   X,
 } from "@phosphor-icons/react/dist/ssr";
@@ -12,11 +13,14 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CardForm from "./cardform";
 import Config from "@/resources/config";
+import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 
 function Billing() {
   const [pms, setPms] = useState([]);
   const [stripePromise, setStripePromise] = useState<any>(null);
   const [clientSecret, setclientSecret] = useState("");
+  const [isfetchingbilling, setisfetchingbilling] = useState(false);
+  const { openpopup } = useGlobalPopup();
 
   useEffect(() => {
     let accesstoken = getCookie("syn_a");
@@ -97,6 +101,38 @@ function Billing() {
       });
   }, []);
 
+  function managebillingaccount() {
+    if (isfetchingbilling) return;
+
+    setisfetchingbilling(true);
+
+    const token_ = getCookie("syn_a");
+    fetch(`${Config().api}/stripe/managebilling`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token_}`,
+      },
+      body: JSON.stringify({}),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setisfetchingbilling(false);
+        if (data.refresh) {
+          window.location.reload();
+        } else if (data.nocustomer) {
+          openpopup(
+            "Sorry. You Don't Have A Billing Account. Purchase Premium Subscription",
+            false
+          );
+        } else if (data.status) {
+          window.open(data.url, "_blank");
+        } else {
+          openpopup("Something Went Wrong", false);
+        }
+      });
+  }
+
   return (
     <>
       {addpmclicked && (
@@ -136,6 +172,25 @@ function Billing() {
           </label>
         </div>
         <div className="mt-4">
+          <h3>Manage Your Billing Account</h3>
+          <button
+            onClick={managebillingaccount}
+            className="flex flex-row gap-2 items-center mt-6 mb-6 cursor-pointer py-3 px-5"
+          >
+            {isfetchingbilling ? (
+              <>
+                <LoadingDots width={22} fill="var(--synblack)" />
+                Please Wait..
+              </>
+            ) : (
+              <>
+                <Money size={32} weight="bold" />
+                Manage Billing Account
+              </>
+            )}
+          </button>
+        </div>
+        <div className="mt-1">
           <h3>Your Payment Methods</h3>
           <button
             onClick={() => setaddpmclicked(true)}

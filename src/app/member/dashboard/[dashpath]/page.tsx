@@ -17,7 +17,7 @@ import { url } from "inspector";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function Dashboard({ params }: { params: { dashpath: "" } }) {
+function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const { push } = useRouter();
   const path = usePathname();
   const menuitems = [
@@ -177,4 +177,4 @@ function Dashboard({ params }: { params: { dashpath: "" } }) {
   );
 }
 
-export default isAuth(Dashboard);
+export default isAuth(DashboardItems);

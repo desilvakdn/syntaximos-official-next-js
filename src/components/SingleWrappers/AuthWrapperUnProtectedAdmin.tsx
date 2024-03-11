@@ -4,8 +4,8 @@ import AuthContext from "./AuthProvider";
 import PageLoader from "../Loader/page";
 import { useRouter } from "next/navigation";
 
-export default function isNotAuth(Component: any) {
-  return function IsNotAuth(props: any) {
+export default function isNotAuthAdmin(Component: any) {
+  return function IsNotAuthAdmin(props: any) {
     const router = useRouter();
 
     const { isloggedin, userid, isloading, isadmin } = useContext(AuthContext);

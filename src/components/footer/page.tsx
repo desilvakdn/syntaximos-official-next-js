@@ -66,8 +66,11 @@ function Footer() {
 
   return (
     <>
-      {((!isloggedin && !pathname.includes("/member/dashboard")) ||
-        !pathname.includes("/member/dashboard")) && (
+      {!(
+        isloggedin &&
+        (pathname.includes("/member/dashboard") ||
+          pathname.includes("/admin/dashboard"))
+      ) && (
         <div className="mt-auto bg-zinc-900 min-h-72 rounded flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-8">
             <div className="flex flex-col justify-center items-center text-center md:justify-start md:items-start md:text-left">
