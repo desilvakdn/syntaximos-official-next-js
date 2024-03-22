@@ -1,6 +1,8 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import isNotAuth from "@/components/SingleWrappers/AuthWrapperUnProtected";
+import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import DropDown from "@/components/dropdown";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
 import isStrongPassword from "@/helpers/passwordstrengthchecker";
 import Config from "@/resources/config";
@@ -11,13 +13,13 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 function Register() {
   const { push } = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const { openpopup } = useGlobalPopup();
 
   const [formdata, setformdata] = useState({
     firstname: "",
     lastname: "",
     username: "",
-    country: "",
-    countrycode: "",
+    country: { name: "", code: "" },
     email: "",
     password: "",
     confirmpassword: "",
@@ -35,7 +37,7 @@ function Register() {
   const [submitclicked, setsubmitclicked] = useState(false);
   const [isloading, setisloading] = useState(false);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     fetch("http://ip-api.com/json/?fields=61439")
       .then((res) => res.json())
       .then((data) => {
@@ -45,7 +47,7 @@ function Register() {
           countrycode: data.countryCode,
         });
       });
-  }, []);
+  }, []); */
 
   useEffect(() => {
     if (isStrongPassword(formdata.password)) {
@@ -88,10 +90,16 @@ function Register() {
       !formdata.ispassconfirmed ||
       !formdata.firstname ||
       !formdata.lastname ||
-      !formdata.username
+      !formdata.username ||
+      !formdata.country.name
     ) {
       setisloading(false);
       setsubmitclicked(true);
+
+      if (!formdata.country.name) {
+        openpopup("Select Your Country To Continue", false);
+      }
+
       return;
     }
 
@@ -137,12 +145,6 @@ function Register() {
 
               setisloading(false);
             });
-
-          /* setproperties({
-            popup: true,
-            header: "You're Welcome",
-            body: "Congradulations, You're Now A Syntaximos. Just Verify Your Email And You're Good To Go. You Will Be Redirected to Verify Email. Click On Close.",
-          }); */
         } else {
           setproperties({
             popup: true,
@@ -217,13 +219,10 @@ function Register() {
               id=""
               placeholder="Username"
             />
-            <input
-              disabled={true}
-              value={formdata.country}
-              type="text"
-              name=""
-              id=""
+            <DropDown
+              value={formdata.country.name}
               placeholder="Country"
+              setvalue={(itm) => setformdata({ ...formdata, country: itm })}
             />
           </div>
           {formdata.email && !formdata.isvalidemail && (
