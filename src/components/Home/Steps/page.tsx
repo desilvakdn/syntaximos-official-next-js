@@ -1,15 +1,19 @@
 "use client";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface Steps {
   title: string;
   description: string;
-  image?: string;
+  image: string;
 }
 
 function Steps({ steps }: { steps: Steps[] }) {
   const [currentActiveStep, setCurrentActiveStep] = useState(1);
   const [SlideInUp, setSlideInUp] = useState(false);
+
+  let imagewidth = 500;
+  let imageheight = 300;
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -56,8 +60,15 @@ function Steps({ steps }: { steps: Steps[] }) {
         <div
           className={`${
             SlideInUp ? "SlideIn" : ""
-          } min-w-96 h-72 bg-synwhite rounded`}
-        ></div>
+          } min-w-[${imagewidth}px] min-h-[${imageheight}px] bg-zinc-800 rounded border-solid border-2 border-synwhite flex justify-center items-center`}
+        >
+          <Image
+            src={steps[currentActiveStep - 1].image}
+            width={imagewidth}
+            height={imageheight}
+            alt="Steps To Follow"
+          />
+        </div>
         <div className="p-10 flex flex-col justify-center items-start">
           <h3 className={`${SlideInUp ? "SlideIn" : ""} transition-all`}>
             {steps[currentActiveStep - 1].title}
