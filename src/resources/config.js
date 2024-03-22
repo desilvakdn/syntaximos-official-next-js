@@ -3,7 +3,7 @@ const dev = "http://localhost:9090";
 
 function Config() {
   return {
-    api: dev,
+    api: build,
   };
 }
 
