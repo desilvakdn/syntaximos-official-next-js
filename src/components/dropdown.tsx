@@ -309,9 +309,10 @@ function DropDown({
               />
               {countries.length > 0 && (
                 <div className="bg-synwhite flex-grow w-full rounded overflow-y-auto flex flex-col gap-2 p-2">
-                  {countries.map((singlecountry) => {
+                  {countries.map((singlecountry, index) => {
                     return (
                       <label
+                        key={index}
                         onClick={() => {
                           setvalue(singlecountry);
                           setopenpop(false);
