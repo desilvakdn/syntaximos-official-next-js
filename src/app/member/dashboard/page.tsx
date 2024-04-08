@@ -2,7 +2,7 @@
 import PageLoader from "@/components/Loader/page";
 import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 function Dashboard() {
   const path = usePathname();

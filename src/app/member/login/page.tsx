@@ -1,7 +1,5 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import PageLoader from "@/components/Loader/page";
-import AuthContext from "@/components/SingleWrappers/AuthProvider";
 import isNotAuth from "@/components/SingleWrappers/AuthWrapperUnProtected";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import Config from "@/resources/config";
@@ -12,7 +10,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 function Login() {

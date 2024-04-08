@@ -2,9 +2,9 @@
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { createContext, useState, useEffect } from "react";
-import LoadingDots from "../Animations/LoadingDots/page";
 import PageLoader from "../Loader/page";
 import Config from "@/resources/config";
+import { usePathname } from "next/navigation";
 
 const AuthContext = createContext({
   isloggedin: false,
@@ -14,6 +14,7 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }: { children: any }) => {
+  const pathname = usePathname();
   const [accesstoken, setAccesstoken] = useState("");
   const [userid, setUserId] = useState("");
   const [isloggedin, setIsloggedin] = useState(false);
@@ -91,7 +92,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   return (
     <AuthContext.Provider value={{ isloggedin, userid, isloading, isadmin }}>
-      {isloading ? <PageLoader /> : children}
+      {isloading && pathname.includes("member/dashboard") ? (
+        <PageLoader />
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

@@ -1,6 +1,5 @@
 "use client";
 import Config from "@/resources/config";
-import { UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useState } from "react";
 import LoadingDots from "../Animations/LoadingDots/page";

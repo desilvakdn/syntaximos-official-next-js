@@ -4,6 +4,7 @@ import ExtensionsDashboard from "@/components/Dashboard/Extensions/extensions";
 import Myaddons from "@/components/Dashboard/My Addons/myaddons";
 import Setting from "@/components/Dashboard/Setting/setting";
 import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
+import SyntaximosLogo from "@/Icons/syntaximoswordlogo";
 import Config from "@/resources/config";
 import {
   BoundingBox,
@@ -13,12 +14,12 @@ import {
   SignOut,
 } from "@phosphor-icons/react/dist/ssr";
 import { deleteCookie, getCookie } from "cookies-next";
-import { url } from "inspector";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const { push } = useRouter();
+  const [ispremium, setIspremium] = useState(false);
   const path = usePathname();
   const menuitems = [
     {
@@ -83,6 +84,31 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       });
   }, []);
 
+  useEffect(() => {
+    const acc_token = getCookie("syn_a");
+    const ref_token = getCookie("syn_r");
+
+    if (acc_token && ref_token) {
+      fetch(`${Config().api}/auth/userdetails`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${acc_token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.refresh) {
+            window.location.reload();
+          } else if (data.status) {
+            setIspremium(data.data.premium);
+          }
+        });
+    } else {
+      setIspremium(false);
+    }
+  }, []);
+
   async function logout() {
     setProperties({ activetab: 4 });
 
@@ -114,13 +140,17 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   return (
     <div className="fixed top-3 left-3 right-3 bottom-3 flex flex-row gap-3 ">
       <div className="w-96 max-w-72 flex flex-col bg-zinc-900 rounded p-2 gap-4">
-        <div className="text-center">
-          <h2
+        <div
+          onClick={() => push("/")}
+          className="text-center w-full flex justify-center items-center py-4 cursor-pointer transition-all hover:scale-[1.04]"
+        >
+          <SyntaximosLogo width={150} logocolor="#2d5bff" />
+          {/* <h2
             onClick={() => push("/")}
             className="transition-all hover:cursor-pointer hover:scale-[1.01]"
           >
             Syntaximos
-          </h2>
+          </h2> */}
         </div>
         <div className="flex-grow  rounded flex flex-col gap-2 ">
           {menuitems.slice(0, -1).map((item, index) => {
@@ -160,7 +190,21 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
           <label htmlFor="" className="bg-synblue px-3 py-2 rounded">
             {navlabel[params.dashpath as keyof typeof navlabel]}
           </label>
-          <label htmlFor="">{`Hi ${firstname}`}</label>
+          <div className="flex flex-row gap-4 items-center">
+            <label htmlFor="">{`Hi ${firstname}`}</label>
+            {ispremium && (
+              <button
+                onClick={() =>
+                  window.open(
+                    "https://join.skype.com/invite/vPQfjOHbv1M3",
+                    "_blank"
+                  )
+                }
+              >
+                Contact Us On Skype
+              </button>
+            )}
+          </div>
         </div>
         <div className="w-full h-full flex-grow-1 bg-zinc-900  rounded flex flex-col gap-3">
           {

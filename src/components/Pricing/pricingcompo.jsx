@@ -1,12 +1,11 @@
 "use client";
-import { Check, CheckSquare, X, XSquare } from "@phosphor-icons/react/dist/ssr";
-import React, { use, useEffect, useState } from "react";
+import { CheckSquare, XSquare } from "@phosphor-icons/react/dist/ssr";
+import React, { useEffect, useState } from "react";
 import PageLoader from "@/components/Loader/page";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useGlobalPopup } from "../SingleWrappers/MessageWrapper";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import { loadStripe } from "@stripe/stripe-js";
 import Config from "@/resources/config";
 
 function PricingSection({ extid }) {

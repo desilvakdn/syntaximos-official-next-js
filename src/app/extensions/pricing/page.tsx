@@ -1,7 +1,5 @@
 "use client";
 import PricingSection from "@/components/Pricing/pricingcompo";
-import PricingMode from "@/components/Pricing/pricingmain/pricingmode";
-import SearchExt from "@/components/Pricing/pricingmain/searchext";
 import Config from "@/resources/config";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";

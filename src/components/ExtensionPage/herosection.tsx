@@ -1,12 +1,6 @@
 "use client";
 import { BackgroundBeams } from "@/ui/BackgroundBeams";
-import {
-  Download,
-  DownloadSimple,
-  Star,
-  StarHalf,
-  User,
-} from "@phosphor-icons/react/dist/ssr";
+import { DownloadSimple, Star, StarHalf } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";

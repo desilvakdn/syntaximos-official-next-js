@@ -4,7 +4,7 @@ import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
 import Config from "@/resources/config";
 import { BoundingBox } from "@phosphor-icons/react/dist/ssr";
 import { deleteCookie, getCookie } from "cookies-next";
-import React, { useEffect } from "react";
+import React from "react";
 
 function DashboardAdmin() {
   function logout() {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import QAHolder from "./QAHolder";
-import { motion } from "framer-motion";
+import { LazyMotion, m, domAnimation } from "framer-motion";
 
 interface QADetails {
   status: boolean;
@@ -29,21 +29,25 @@ function QAcontainer({ qacontainer }: { qacontainer: QADetails }) {
         ))}
         <div>
           {selected ? (
-            <motion.button
-              layout
-              className="w-fit px-10"
-              onClick={() => setselected(false)}
-            >
-              <label htmlFor="">View Less</label>
-            </motion.button>
+            <LazyMotion features={domAnimation}>
+              <m.button
+                layout
+                className="w-fit px-10"
+                onClick={() => setselected(false)}
+              >
+                <label htmlFor="">View Less</label>
+              </m.button>
+            </LazyMotion>
           ) : (
-            <motion.button
-              layout
-              className="w-fit px-10"
-              onClick={() => setselected(true)}
-            >
-              <label htmlFor="">View All</label>
-            </motion.button>
+            <LazyMotion features={domAnimation}>
+              <m.button
+                layout
+                className="w-fit px-10"
+                onClick={() => setselected(true)}
+              >
+                <label htmlFor="">View All</label>
+              </m.button>
+            </LazyMotion>
           )}
         </div>
       </div>

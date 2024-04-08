@@ -1,10 +1,5 @@
 "use client";
-import {
-  DotsThreeOutline,
-  Money,
-  PlusCircle,
-  X,
-} from "@phosphor-icons/react/dist/ssr";
+import { Money, PlusCircle, X } from "@phosphor-icons/react/dist/ssr";
 import React, { useEffect, useState } from "react";
 import SinglePaymentCard from "./singlecard";
 import { getCookie } from "cookies-next";

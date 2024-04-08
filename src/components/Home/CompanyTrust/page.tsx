@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, m, domAnimation } from "framer-motion";
 
 interface Logos {
   [key: string]: JSX.Element;
@@ -29,33 +29,37 @@ export default function TrustedBy() {
   return (
     <>
       <div className="my-10">
-        <motion.div
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
-          className="flex flex-col justify-center items-center text-center"
-        >
-          <h2>Trusted By Big Giants All Over The World</h2>
-          <label htmlFor="" className="opacity-50">
-            We&apos;re Building Softwares Following Latest Standards Making Us
-            Notable For Bigger Giants
-          </label>
-        </motion.div>
+        <LazyMotion features={domAnimation}>
+          <m.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
+            className="flex flex-col justify-center items-center text-center"
+          >
+            <h2>Trusted By Big Giants All Over The World</h2>
+            <label htmlFor="" className="opacity-50">
+              We&apos;re Building Softwares Following Latest Standards Making Us
+              Notable For Bigger Giants
+            </label>
+          </m.div>
+        </LazyMotion>
         <div className="content flex flex-row flex-wrap justify-center items-center gap-10">
           {badges.map((item, index) => (
-            <motion.label
-              key={index}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{
-                duration: 1,
-                delay: 0.6 + 0.1 * index,
-                ease: "backInOut",
-              }}
-              htmlFor=""
-            >
-              {logos(item, active)}
-            </motion.label>
+            <LazyMotion key={index} features={domAnimation}>
+              <m.label
+                key={index}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.6 + 0.1 * index,
+                  ease: "backInOut",
+                }}
+                htmlFor=""
+              >
+                {logos(item, active)}
+              </m.label>
+            </LazyMotion>
           ))}
         </div>
       </div>

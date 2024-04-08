@@ -1,6 +1,4 @@
-import { Plus } from "@phosphor-icons/react/dist/ssr";
 import React from "react";
-import QAHolder from "./QAHolder";
 import QAcontainer from "./QAcontainer";
 import Config from "@/resources/config";
 

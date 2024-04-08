@@ -5,16 +5,10 @@ import ConfirmBasic from "@/components/popups/ConfirmBasic/page";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
 import Config from "@/resources/config";
 import {
-  Check,
   CrownSimple,
   Fan,
   Key,
-  NavigationArrow,
-  PlusCircle,
-  Sparkle,
-  Star,
   Trash,
-  User,
   YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";

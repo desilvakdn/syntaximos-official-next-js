@@ -1,6 +1,4 @@
 import ExtensionCollection from "@/components/Dashboard/Extensions/extensioncollection";
-import ProductShowcase from "@/components/Home/Products/mom";
-import Products from "@/components/Home/Products/page";
 import Config from "@/resources/config";
 import React from "react";
 

@@ -1,4 +1,3 @@
-import { Star } from "@phosphor-icons/react/dist/ssr";
 import React from "react";
 import TestomonialAction from "./testomonialaction";
 

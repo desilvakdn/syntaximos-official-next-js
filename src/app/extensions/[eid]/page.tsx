@@ -6,7 +6,7 @@ import PricingSectionExtPage from "@/components/ExtensionPage/pricing";
 import QASection from "@/components/ExtensionPage/qanda";
 import Config from "@/resources/config";
 import { X } from "@phosphor-icons/react/dist/ssr";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type ExtensionData = typeof extensiondata;
 const extensiondata = {

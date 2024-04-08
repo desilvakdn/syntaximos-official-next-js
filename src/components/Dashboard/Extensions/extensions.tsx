@@ -6,7 +6,6 @@ import SingleExtension from "./singleextension";
 import Image from "next/image";
 import { Check, X } from "@phosphor-icons/react/dist/ssr";
 import Config from "@/resources/config";
-import Timer from "@/modules/timer";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 
 interface Extension {

@@ -1,6 +1,6 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import { CheckCircle, CheckFat, X } from "@phosphor-icons/react/dist/ssr";
+import { CheckFat, X } from "@phosphor-icons/react/dist/ssr";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Config from "@/resources/config";
