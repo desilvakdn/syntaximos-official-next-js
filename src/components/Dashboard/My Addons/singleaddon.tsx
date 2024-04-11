@@ -4,6 +4,7 @@ import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import ConfirmBasic from "@/components/popups/ConfirmBasic/page";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
 import Config from "@/resources/config";
+import { Play } from "@phosphor-icons/react";
 import {
   CrownSimple,
   Fan,
@@ -34,7 +35,6 @@ function SingleAddon({
   setsecretkey: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const { push } = useRouter();
-  const { openpopup } = useGlobalPopup();
 
   const [props, setProps] = useState({
     check: true,
@@ -47,7 +47,10 @@ function SingleAddon({
     confirmpremiumcancel: false,
   });
 
+  const { openpopup } = useGlobalPopup();
   const [iscancelatend, setIscancelatend] = useState(false);
+  const [confirmedupdate, setconfirmedupdate] = useState(false);
+  const [isupdating, setisupdating] = useState(false);
 
   const [iscancellingpremium, setIscancellingpremium] = useState(false);
 
@@ -185,6 +188,35 @@ function SingleAddon({
       });
   }, []);
 
+  function confirmupdate() {
+    if (isupdating) return;
+
+    setisupdating(true);
+    const acc_token = getCookie("syn_a");
+    fetch(`${Config().api}/dashboard/addon/confirmupdate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${acc_token}`,
+      },
+      body: JSON.stringify({
+        identifier: item.identifier,
+        version: item.version,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setisupdating(false);
+        if (data.refresh) {
+          window.location.reload();
+        } else if (data.status) {
+          setconfirmedupdate(true);
+        } else {
+          openpopup("Something Went Wrong. Please Try Again Later", false);
+        }
+      });
+  }
+
   return (
     <>
       {props.popupprops.ispopup && (
@@ -223,6 +255,44 @@ function SingleAddon({
             : "bg-synwhite"
         }`}
       >
+        {item.updateavailable && !confirmedupdate && (
+          <div className="absolute top-0 bottom-0 left-0 right-0 bg-synblack bg-opacity-[89%] z-[1] flex justify-center items-center">
+            <div className="flex flex-col items-center justify-center">
+              <h3 className="mb-1 text-white">New Update Available</h3>
+              <label
+                htmlFor=""
+                className="bg-synblack text-white w-full rounded py-1 text-center"
+              >
+                {`V ${item.version}`}
+              </label>
+              <div className="flex flex-row gap-1 items-center mt-2 mb-5">
+                <button onClick={() => setconfirmedupdate(true)}>
+                  I&apos;ll Update Later
+                </button>
+                <button onClick={confirmupdate}>
+                  {isupdating ? (
+                    <LoadingDots width={24} fill="var(--synblack)" />
+                  ) : (
+                    "I've Updated"
+                  )}
+                </button>
+              </div>
+              <label
+                onClick={() =>
+                  window.open(
+                    `/extensions/support/${item.identifier}`,
+                    "_blank"
+                  )
+                }
+                htmlFor=""
+                className="text-white flex flex-row gap-1 items-center hover:text-red-500 hover:cursor-pointer hover:scale-105 transition-all"
+              >
+                <Play size={22} weight="bold" />
+                <span>How To Update Manually</span>
+              </label>
+            </div>
+          </div>
+        )}
         {iscancelatend && (
           <label
             htmlFor=""

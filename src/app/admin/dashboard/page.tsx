@@ -1,12 +1,15 @@
 "use client";
+import AdminAction from "@/components/AdminDashboard/action";
 import AdminOverView from "@/components/AdminDashboard/overview";
 import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
 import Config from "@/resources/config";
-import { BoundingBox } from "@phosphor-icons/react/dist/ssr";
+import { BoundingBox, Cursor } from "@phosphor-icons/react/dist/ssr";
 import { deleteCookie, getCookie } from "cookies-next";
-import React from "react";
+import React, { useState } from "react";
 
 function DashboardAdmin() {
+  const [option, setoption] = useState(0);
+
   function logout() {
     const token = getCookie("syn_admin");
     fetch(`${Config().api}/admin/logout`, {
@@ -35,9 +38,19 @@ function DashboardAdmin() {
           </label>
         </div>
         <div className="flex-grow px-4 flex-col flex gap-2">
-          <div className="flex flex-row gap-2 items-center justify-center cursor-pointer rounded bg-synblue text-synblack py-3 transition-all hover:scale-105">
+          <div
+            onClick={() => setoption(0)}
+            className="flex flex-row gap-2 items-center justify-center cursor-pointer rounded bg-synblue text-synblack py-3 transition-all hover:scale-105"
+          >
             <BoundingBox size={32} weight="bold" />
             <label htmlFor="">Overview</label>
+          </div>
+          <div
+            onClick={() => setoption(1)}
+            className="flex flex-row gap-2 items-center justify-center cursor-pointer rounded bg-synblue text-synblack py-3 transition-all hover:scale-105"
+          >
+            <Cursor size={32} weight="bold" />
+            <label htmlFor="">Actions</label>
           </div>
         </div>
       </div>
@@ -46,7 +59,8 @@ function DashboardAdmin() {
           <button onClick={logout}>Log Out</button>
         </div>
         <div className="w-full flex-grow bg-zinc-900 p-7">
-          <AdminOverView />
+          {option === 0 && <AdminOverView />}
+          {option === 1 && <AdminAction />}
         </div>
       </div>
     </div>
