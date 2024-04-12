@@ -62,11 +62,9 @@ function Myaddons() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
-          console.log(data.data);
           setExt(data.data);
         }
         setLoading(false);

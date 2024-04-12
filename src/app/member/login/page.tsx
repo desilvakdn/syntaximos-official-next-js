@@ -72,7 +72,6 @@ function Login() {
             .then((res) => res.json())
             .then((data) => {
               setProperties({ ...properties, isloading: false });
-              console.log(data);
 
               if (!data.status && data.nonverified) {
                 openpopup(
@@ -103,7 +102,6 @@ function Login() {
               }
             })
             .catch((e) => {
-              console.log("Failed To Log In");
               setProperties({ ...properties, isloading: false });
               setProperties({ ...properties, issuccesslogin: "invalid" });
               setTimeout(() => {
@@ -124,7 +122,6 @@ function Login() {
       !properties.passresetemail ||
       !emailwp
     ) {
-      console.log("hi i'm there");
       return;
     }
     setProperties({ ...properties, ispasswordresetsending: true });
@@ -141,7 +138,6 @@ function Login() {
       .then((res) => res.json())
       .then((data) => {
         setProperties({ ...properties, ispasswordresetsending: false });
-        console.log(data);
         if (data.status) {
           push(`/member/verify/password/${data.id_}.${data.token}`);
         } else {

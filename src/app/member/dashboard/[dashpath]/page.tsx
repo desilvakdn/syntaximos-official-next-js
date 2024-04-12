@@ -102,7 +102,6 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
@@ -122,14 +121,20 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("higifhgr", data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
-          console.log(data.data);
           setnews(data.data);
         } else {
-          setnews([]);
+          setnews([
+            {
+              id: 0,
+              message: "",
+              headline: "",
+              date: new Date(),
+              isread: false,
+            },
+          ]);
         }
       });
 
@@ -153,7 +158,6 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
             id: number;
           };
         }) => {
-          console.log("higifhgr", data);
           if (data.refresh) {
             window.location.reload();
           } else if (data.status) {
@@ -217,7 +221,6 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
 
       const data = await response.json();
 
-      console.log(data);
       if (data.status) {
         deleteCookie("syn_a");
         deleteCookie("syn_r");

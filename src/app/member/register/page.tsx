@@ -116,7 +116,6 @@ function Register() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status) {
           fetch(`${Config().api}/auth/register`, {
             method: "POST",

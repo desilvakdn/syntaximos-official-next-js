@@ -28,7 +28,6 @@ function AccountVerification({
     if (!user_id || !token_) {
       push("/member/register");
     } else {
-      console.log("user_id", user_id);
       fetch(`${Config().api}/auth/validate/email`, {
         method: "POST",
         headers: {
@@ -41,7 +40,6 @@ function AccountVerification({
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           if (data.status) {
             setvalid(true);
           } else {

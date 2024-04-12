@@ -36,7 +36,6 @@ function AdminOverView() {
         if (data.status) {
           setdata(data.data);
         } else {
-          console.log("Unexpected data:", data);
         }
       });
   }, []);

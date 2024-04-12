@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
         )
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             setloading(false);
             if (data.status) {
               setCookie("syn_a", data.tokens.accesstoken);
@@ -64,7 +63,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
         fetch(`${Config().api}/admin/verifytoken/${admintoken}`)
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             if (data.status) {
               setIsAdmin(true);
               let x: {

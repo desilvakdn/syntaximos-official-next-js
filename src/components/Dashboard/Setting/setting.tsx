@@ -71,7 +71,6 @@ function Setting() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
@@ -110,7 +109,6 @@ function Setting() {
 
       const data = await response.json();
 
-      console.log(data);
       if (data.status) {
         deleteCookie("syn_a");
         deleteCookie("syn_r");
@@ -175,7 +173,6 @@ function Setting() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
@@ -197,7 +194,6 @@ function Setting() {
         setprocessloading(false);
       })
       .catch((e) => {
-        console.log(e);
         openpopup("Something Went Wrong", false);
         setprocessloading(false);
       });

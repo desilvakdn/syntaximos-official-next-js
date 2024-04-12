@@ -44,7 +44,6 @@ export default function isAuth(Component: any) {
       return null;
     }
 
-    console.log("hi345");
     return <Component {...props} />;
   };
 }

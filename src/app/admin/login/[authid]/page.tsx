@@ -95,7 +95,6 @@ function Admin({
             .then((res) => res.json())
             .then((data) => {
               setProperties({ ...properties, isloading: false });
-              console.log(data);
 
               if (data.status) {
                 setCookie("syn_admin", data.tokens.accesstoken);
@@ -112,7 +111,6 @@ function Admin({
               }
             })
             .catch((e) => {
-              console.log("Failed To Log In");
               setProperties({ ...properties, isloading: false });
               setProperties({ ...properties, issuccesslogin: "invalid" });
               setTimeout(() => {

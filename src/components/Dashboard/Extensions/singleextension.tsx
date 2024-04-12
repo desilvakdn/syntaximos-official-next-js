@@ -53,7 +53,6 @@ function SingleExtension({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status && data.refresh) {
           window.location.reload();
         }

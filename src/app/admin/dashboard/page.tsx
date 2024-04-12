@@ -25,7 +25,6 @@ function DashboardAdmin() {
           deleteCookie("syn_admin");
           window.location.reload();
         } else {
-          console.log("Unexpected data:", data);
         }
       });
   }

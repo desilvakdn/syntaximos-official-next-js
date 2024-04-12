@@ -50,7 +50,6 @@ function Billing() {
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
-          console.log(data);
           setclientSecret(data.clientsecret);
           //setintentid(data.id);
         }
@@ -74,7 +73,6 @@ function Billing() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {

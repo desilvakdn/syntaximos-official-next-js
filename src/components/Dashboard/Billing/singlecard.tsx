@@ -69,7 +69,6 @@ function SinglePaymentCard({ data }: { data: SinglePaymentCardProps }) {
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {

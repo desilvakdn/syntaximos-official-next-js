@@ -266,7 +266,6 @@ function DropDown({
   const [openpop, setopenpop] = useState(false);
 
   useEffect(() => {
-    console.log(countryname);
     if (countryname === "") {
       setcountries(countriesfull);
     } else {
@@ -334,17 +333,13 @@ function DropDown({
         className="flex flex-grow w-full relative cursor-pointer"
         onClick={() => setopenpop(true)}
       >
-        <input
-          disabled={true}
-          value={value}
-          type="text"
-          name=""
-          id=""
-          placeholder={"Select " + placeholder}
-          className={`${
-            !value ? "bg-zinc-300 placeholder-black" : ""
-          } cursor-pointer`}
-        />
+        <div
+          className="w-full bg-zinc-100 text-black flex items-center px-3 rounded"
+          onClick={() => setopenpop(true)}
+        >
+          {value ? value : "Select Country"}
+        </div>
+
         <label
           htmlFor=""
           className="absolute text-black right-1 top-1/2 translate-y-[-50%] cursor-pointer hover:opacity-60"

@@ -109,7 +109,6 @@ function SingleAddon({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status && data.refresh) {
           openpopup("Extension Removed Successfully", true);
 
@@ -132,7 +131,6 @@ function SingleAddon({
       return;
     }
 
-    console.log("Cancelling Premium");
     setIscancellingpremium(true);
     setTimeout(() => {
       setIscancellingpremium(false);
@@ -156,7 +154,6 @@ function SingleAddon({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setIscancellingpremium(false);
         if (data.refresh) {
           window.location.reload();
@@ -183,9 +180,7 @@ function SingleAddon({
           setIscancelatend(false);
         }
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => {});
   }, []);
 
   function confirmupdate() {

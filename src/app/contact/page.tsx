@@ -47,7 +47,6 @@ function Contact() {
           if (data.refresh) {
             window.location.reload();
           } else if (data.status) {
-            console.log(data.data);
             setDetails({
               ...details,
               name: data.data.name,
@@ -130,7 +129,6 @@ function Contact() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status) {
           fetch(`${Config().api}/web/contact`, {
             method: "POST",

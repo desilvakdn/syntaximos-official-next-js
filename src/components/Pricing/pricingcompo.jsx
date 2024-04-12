@@ -43,7 +43,6 @@ function PricingSection({ extid }) {
       .then((data) => {
         setLoading(false);
         if (data.status) {
-          console.log(data);
           setData(data.data);
         }
       });

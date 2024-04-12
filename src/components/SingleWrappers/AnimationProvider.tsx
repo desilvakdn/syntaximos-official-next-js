@@ -12,9 +12,7 @@ function AnimationProvider({ children, width = "100%" }: Props) {
   const isinView = useInView(ref, { once: true });
   useEffect(() => {
     if (isinView) {
-      console.log("InView");
     } else {
-      console.log("NotInView");
     }
   }, [isinView]);
   return (

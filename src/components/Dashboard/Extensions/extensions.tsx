@@ -43,7 +43,6 @@ function ExtensionsDashboard() {
       setLoading(false);
       return;
     }
-    console.log(accesstoken);
     fetch(`${Config().api}/dashboard/extensions`, {
       method: "GET",
       headers: {
@@ -53,7 +52,6 @@ function ExtensionsDashboard() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.refresh) {
           window.location.reload();
         } else if (data.status) {
