@@ -123,7 +123,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       .then((data) => {
         if (data.refresh) {
           window.location.reload();
-        } else if (data.status) {
+        } else if (data.status && data?.data?.length > 0) {
           setnews(data.data);
         } else {
           setnews([
