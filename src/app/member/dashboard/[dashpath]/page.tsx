@@ -10,6 +10,7 @@ import Config from "@/resources/config";
 import { motion } from "framer-motion";
 import {
   BoundingBox,
+  Check,
   CurrencyCircleDollar,
   Envelope,
   EnvelopeSimple,
@@ -21,9 +22,11 @@ import {
 import { deleteCookie, getCookie } from "cookies-next";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 
 function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const { push } = useRouter();
+  const { openpopup } = useGlobalPopup();
   const [ispremium, setIspremium] = useState(false);
   const [opennews, setopennews] = useState(false);
   const path = usePathname();
@@ -53,6 +56,14 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       identifier: "setting",
     },
   ];
+
+  let [hotnews, sethotnews] = useState({
+    headline: "",
+    status: false,
+    linktext: "",
+    link: "",
+    id: 34774437,
+  });
 
   let navlabel = {
     extensions: "Extensions",
@@ -121,6 +132,49 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
           setnews([]);
         }
       });
+
+    fetch(`${Config().api}/dashboard/hotnews/get`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accesstoken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (data: {
+          refresh: Boolean;
+          status: Boolean;
+          data: {
+            headline: string;
+            status: boolean;
+            link: string;
+            linktext: string;
+            id: number;
+          };
+        }) => {
+          console.log("higifhgr", data);
+          if (data.refresh) {
+            window.location.reload();
+          } else if (data.status) {
+            sethotnews({
+              headline: data.data.headline,
+              status: data.data.status,
+              linktext: data.data.linktext,
+              link: data.data.link,
+              id: data.data.id, // Convert to string if id is a number
+            });
+          } else {
+            sethotnews({
+              headline: "",
+              status: false,
+              linktext: "",
+              link: "",
+              id: 34774437,
+            });
+          }
+        }
+      );
   }, []);
 
   useEffect(() => {
@@ -216,6 +270,40 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
           window.location.reload();
         } else if (data.status) {
           setnews(data.data);
+        }
+      })
+      .finally(() => {
+        return true;
+      });
+  }
+
+  function hotnewsread() {
+    let accesstoken = getCookie("syn_a");
+    fetch(`${Config().api}/dashboard/hotnews/read`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accesstoken}`,
+      },
+      body: JSON.stringify({
+        id: hotnews.id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.refresh) {
+          window.location.reload();
+        } else if (data.status) {
+          openpopup("Message Removed Successfully", true);
+          sethotnews({
+            headline: "",
+            status: false,
+            linktext: "",
+            link: "",
+            id: 34774437,
+          });
+        } else {
+          openpopup("Message Removed Failed", false);
         }
       })
       .finally(() => {
@@ -365,6 +453,38 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               )}
             </div>
           </div>
+          {hotnews.headline && (
+            <div
+              className={`w-full ${
+                hotnews.status ? "bg-lime-300" : "bg-red-400"
+              } min-h-10 rounded flex flex-row gap-1 items-center justify-between px-10 text-synblack`}
+            >
+              <div className="flex flex-row gap-1 items-center ">
+                <label htmlFor="">
+                  {hotnews.status ? (
+                    <Check size={22} weight="bold" />
+                  ) : (
+                    <X size={22} weight="bold" />
+                  )}
+                </label>
+                <label htmlFor="">{hotnews.headline}</label>
+                {hotnews.link && (
+                  <button
+                    onClick={() => window.open(hotnews.link, "_blank")}
+                    className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
+                  >
+                    {hotnews.linktext}
+                  </button>
+                )}
+              </div>
+              <button
+                onClick={hotnewsread}
+                className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
+              >
+                Mark Read
+              </button>
+            </div>
+          )}
           <div className="w-full h-full flex-grow-1 bg-zinc-900  rounded flex flex-col gap-3">
             {
               {

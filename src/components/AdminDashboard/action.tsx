@@ -10,10 +10,14 @@ function AdminAction() {
   const { openpopup } = useGlobalPopup();
   const [isloading, setloading] = useState(true);
   const [checkedoption, setcheckedoption] = useState(0);
+  const [checkedoptionstatus, setcheckedoptionstatus] = useState(0);
   const [issubmitting, setissubmitting] = useState(false);
   const [issubmittingupdate, setissubmittingupdate] = useState(false);
+  const [issubmittinghotpost, setissubmittinghotpost] = useState(false);
+  const [includelink, setincludelink] = useState(false);
   const [newmsg, setnewmsg] = useState(false);
   const [newupdate, setnewupdate] = useState(false);
+  const [newhotpost, setnewhotpost] = useState(false);
   const [extselectedname, setextselectedname] = useState("");
   const [allextensions, setallextensions] = useState([
     {
@@ -45,6 +49,13 @@ function AdminAction() {
   const [extupdate, setextupdate] = useState({
     identifier: "",
     version: "",
+  });
+  const [hotnewsmessage, sethotnewsmessage] = useState({
+    headline: "",
+    status: false,
+    link: "",
+    linktext: "",
+    readby: [],
   });
 
   useEffect(() => {
@@ -126,6 +137,51 @@ function AdminAction() {
         }
 
         setissubmittingupdate(false);
+      });
+  }
+
+  function submithotmessage() {
+    if (issubmittinghotpost) return;
+    setissubmittinghotpost(true);
+
+    let data: {
+      headline: string;
+      status: boolean;
+      link?: string;
+      linktext?: string;
+      readby: never[];
+    } = hotnewsmessage;
+
+    if (
+      !data.headline ||
+      (includelink && !data.link) ||
+      (includelink && !data.linktext)
+    )
+      return;
+
+    if (!includelink) {
+      let { link, linktext, ...newdata } = data;
+      data = { ...data, link: "", linktext: "" };
+    }
+
+    const token = getCookie("syn_admin");
+    fetch(`${Config().api}/admin/hotnews/post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ post: data }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status) {
+          openpopup("Successfully Submitted", true);
+        } else {
+          openpopup("Something Went Wrong", false);
+        }
+
+        setissubmittinghotpost(false);
       });
   }
 
@@ -336,6 +392,126 @@ function AdminAction() {
               )}
             </button>
             <button onClick={() => setnewupdate(false)}>Cancel</button>
+          </div>
+        </>
+      )}
+
+      <div className="mt-5">
+        <h3 className="p-0 m-0">Submit New Hot Post</h3>
+      </div>
+      {!newhotpost && (
+        <button className="mt-4" onClick={() => setnewhotpost(true)}>
+          Submit New Hot Post
+        </button>
+      )}
+      {newhotpost && (
+        <>
+          <div>
+            <h3>Headline</h3>
+            <input
+              onChange={(e) =>
+                sethotnewsmessage((prev) => ({
+                  ...prev,
+                  headline: e.target.value,
+                }))
+              }
+              value={hotnewsmessage.headline}
+              type="text"
+              name=""
+              id=""
+              className="max-w-[800px]"
+            />
+          </div>
+          <div>
+            <h3>Link</h3>
+            <div className="flex flex-row gap-1 mb-3">
+              <input
+                checked={includelink}
+                type="checkbox"
+                name=""
+                id=""
+                className="w-fit"
+                onChange={() => setincludelink((prev) => (prev ? false : true))}
+              />
+              <label htmlFor="">Include Link</label>
+            </div>
+            {includelink && (
+              <>
+                <div>
+                  <h3>Link Text</h3>
+                  <input
+                    onChange={(e) =>
+                      sethotnewsmessage((prev) => ({
+                        ...prev,
+                        linktext: e.target.value,
+                      }))
+                    }
+                    value={hotnewsmessage.linktext}
+                    type="text"
+                    name=""
+                    id=""
+                    className="max-w-[800px]"
+                  />
+                </div>
+                <div>
+                  <h3>Link </h3>
+                  <input
+                    onChange={(e) =>
+                      sethotnewsmessage((prev) => ({
+                        ...prev,
+                        link: e.target.value,
+                      }))
+                    }
+                    value={hotnewsmessage.link}
+                    type="text"
+                    name=""
+                    id=""
+                    className="max-w-[800px]"
+                  />
+                </div>
+              </>
+            )}
+          </div>
+          <div>
+            <h3>Status Of Post</h3>
+            <div className="flex flex-row gap-10">
+              <div className="flex flex-row gap-1">
+                <input
+                  checked={hotnewsmessage.status ? true : false}
+                  type="radio"
+                  name=""
+                  id=""
+                  className="w-fit"
+                  onChange={() =>
+                    sethotnewsmessage((prev) => ({ ...prev, status: true }))
+                  }
+                />
+                <label htmlFor="">Success</label>
+              </div>
+              <div className="flex flex-row gap-1">
+                <input
+                  checked={!hotnewsmessage.status ? true : false}
+                  type="radio"
+                  name=""
+                  id=""
+                  className="w-fit"
+                  onChange={() =>
+                    sethotnewsmessage((prev) => ({ ...prev, status: false }))
+                  }
+                />
+                <label htmlFor="">Failed</label>
+              </div>
+            </div>
+            <div className="flex flex-row gap-1 mt-4">
+              <button onClick={submithotmessage}>
+                {issubmittinghotpost ? (
+                  <LoadingDots width={25} fill="black" />
+                ) : (
+                  "Submit"
+                )}
+              </button>
+              <button onClick={() => setnewhotpost(false)}>Cancel</button>
+            </div>
           </div>
         </>
       )}
