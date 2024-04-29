@@ -1,6 +1,7 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import isStrongPassword from "@/helpers/passwordstrengthchecker";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
 import { CheckCircle, XCircle } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
@@ -52,26 +53,22 @@ function AccountVerification({
     if (!user_id || !token_) {
       push("/member/register");
     } else {
-      fetch(`${Config().api}/auth/validate/pass`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      fetchPost(
+        "auth/validate/pass",
+        {
           userid: user_id,
           code: token_,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status) {
-            setvalid(true);
-          } else {
-            push("/member/register");
-          }
+        },
+        true
+      ).then((data) => {
+        if (data.status) {
+          setvalid(true);
+        } else {
+          push("/member/register");
+        }
 
-          setischecking(false);
-        });
+        setischecking(false);
+      });
     }
   }, [push, token_, user_id]);
 
@@ -82,36 +79,32 @@ function AccountVerification({
 
     setverifying(true);
 
-    fetch(`${Config().api}/auth/verifytoken/pass`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/verifytoken/pass",
+      {
         userid: user_id,
         code: code,
         token: token_,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          setsuccess("valid");
-          setTimeout(() => {
-            setpassresetform(true);
-          }, 1000);
-          /* setTimeout(() => {
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        setsuccess("valid");
+        setTimeout(() => {
+          setpassresetform(true);
+        }, 1000);
+        /* setTimeout(() => {
             push("/member/login");
           }, 3000); */
-        } else {
-          setsuccess("invalid");
-          setTimeout(() => {
-            setsuccess("");
-          }, 3000);
-        }
+      } else {
+        setsuccess("invalid");
+        setTimeout(() => {
+          setsuccess("");
+        }, 3000);
+      }
 
-        setverifying(false);
-      });
+      setverifying(false);
+    });
   }
 
   function handleresend() {
@@ -120,29 +113,25 @@ function AccountVerification({
     }
     setresending(true);
 
-    fetch(`${Config().api}/auth/resendcode/pass`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/resendcode/pass",
+      {
         userid: user_id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          setresending(false);
-          setresendtext("Sent");
-          setbtnlockresend(true);
-          setTimeout(() => {
-            setbtnlockresend(false);
-          }, 20000);
-          setTimeout(() => {
-            setresendtext("Resend");
-          }, 3000);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        setresending(false);
+        setresendtext("Sent");
+        setbtnlockresend(true);
+        setTimeout(() => {
+          setbtnlockresend(false);
+        }, 20000);
+        setTimeout(() => {
+          setresendtext("Resend");
+        }, 3000);
+      }
+    });
   }
 
   function changepass() {
@@ -152,18 +141,15 @@ function AccountVerification({
 
     setischangingpass(true);
 
-    fetch(`${Config().api}/auth/passworddone`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/passworddone",
+      {
         userid: user_id,
         password: pass,
         token: token_,
-      }),
-    })
-      .then((res) => res.json())
+      },
+      true
+    )
       .then((data) => {
         setischangingpass(false);
         if (data.status) {

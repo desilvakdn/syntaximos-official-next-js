@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Check, X } from "@phosphor-icons/react/dist/ssr";
 import Config from "@/resources/config";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchGet from "@/modules/fetchGet";
+import VerifyLogin from "@/utils/verifylogin";
 
 interface Extension {
   added: boolean;
@@ -38,27 +40,16 @@ function ExtensionsDashboard() {
   const [keyschecker, setkeyschecker] = useState(true);
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
+    if (!VerifyLogin()) {
       setLoading(false);
       return;
     }
-    fetch(`${Config().api}/dashboard/extensions`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setExt(data.data);
-        }
-        setLoading(false);
-      });
+    fetchGet("dashboard/extensions", true).then((data) => {
+      if (data.status) {
+        setExt(data.data);
+      }
+      setLoading(false);
+    });
   }, []);
 
   function copyToClipboard(text: string) {

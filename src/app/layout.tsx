@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import NavBar from "@/components/navbar/page";
 import Footer from "@/components/footer/page";
 import GoogleRecaptchaWrapper from "@/components/SingleWrappers/GoogleRecaptchaWrapper";
-import { AuthProvider } from "@/components/SingleWrappers/AuthProvider";
 import { GlobalPopupProvider } from "@/components/SingleWrappers/MessageWrapper";
 import GPop from "@/components/popups/globalpopup";
 
@@ -46,10 +45,48 @@ const Approach = localFont({
   ],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#101010",
+};
+
 export const metadata: Metadata = {
-  title: "Syntaximos",
-  description:
-    "Make Your Browser More Powerful With Our Browser Extensions And Addons",
+  metadataBase: new URL("https://syntaximos.com"),
+  icons: [
+    `${process.env.NEXT_PUBLIC_WEB_URL}/webicons/icon16.png`,
+    `${process.env.NEXT_PUBLIC_WEB_URL}/webicons/icon32.png`,
+    `${process.env.NEXT_PUBLIC_WEB_URL}/webicons/icon128.png`,
+  ],
+  title: {
+    default: "Syntaximos | Develops Chrome Extensions for Your Productivity",
+    template: "%s | Syntaximos",
+  },
+  description: `Welcome to Syntaximos. We develop best powerful Chrome Extensions for improving your productivity. Discover the collection of web browser extensions in ${new Date().getFullYear()} for task management, research, automation, and more. Optimize your web experience today!`,
+  openGraph: {
+    url: process.env.NEXT_PUBLIC_WEB_URL,
+    siteName: "Syntaximos | Develops Chrome Extensions for Your Productivity",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  keywords: [
+    "Chrome extensions",
+    "Fiverr Mate",
+    "Productivity extensions",
+    "Chrome web store",
+    "Browser extensions",
+    "Efficiency tools",
+    "Task management extensions",
+    "Automation extensions",
+    "Research extensions",
+    "Time-saving extensions",
+    "software",
+    "addons",
+    "Syntaximos",
+  ],
 };
 
 export default function RootLayout({
@@ -62,13 +99,11 @@ export default function RootLayout({
       <body className={Approach.className}>
         <GlobalPopupProvider>
           <GPop />
-          <AuthProvider>
-            <GoogleRecaptchaWrapper>
-              <NavBar />
-              {children}
-              <Footer />
-            </GoogleRecaptchaWrapper>
-          </AuthProvider>
+          <GoogleRecaptchaWrapper>
+            <NavBar />
+            {children}
+            <Footer />
+          </GoogleRecaptchaWrapper>
         </GlobalPopupProvider>
       </body>
     </html>

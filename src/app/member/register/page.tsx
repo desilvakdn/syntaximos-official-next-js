@@ -1,14 +1,15 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import isNotAuth from "@/components/SingleWrappers/AuthWrapperUnProtected";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import DropDown from "@/components/dropdown";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
 import isStrongPassword from "@/helpers/passwordstrengthchecker";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import SocialAuth from "../socialauth/socialauth";
 
 function Register() {
   const { push } = useRouter();
@@ -105,54 +106,42 @@ function Register() {
 
     const gRecaptchaToken = await executeRecaptcha("register");
 
-    fetch(`${Config().api}/auth/recaptcha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `auth/recaptcha`,
+      {
         gRecaptchaToken: gRecaptchaToken,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          fetch(`${Config().api}/auth/register`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formdata),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (!data.status && data.user) {
-                setproperties({
-                  popup: true,
-                  header: "Existing User Found",
-                  body: "It looks like you're already a user. Please login to continue. If not use another email or username to register",
-                });
-              } else if (data.status) {
-                push(`/member/verify/email/${data.id_}.${data.token}`);
-              } else {
-                setproperties({
-                  popup: true,
-                  header: "Something Went Wrong",
-                  body: "It Seems Like You're A Robot. Please Try Again Later Genuinely Without Using Bots Or Automating Extensions.",
-                });
-              }
-
-              setisloading(false);
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        fetchPost(`auth/register`, formdata, true).then((data) => {
+          if (!data.status && data.user) {
+            setproperties({
+              popup: true,
+              header: "Existing User Found",
+              body: "It looks like you're already a user. Please login to continue. If not use another email or username to register",
             });
-        } else {
-          setproperties({
-            popup: true,
-            header: "Something Went Wrong",
-            body: "It Seems Like You're A Robot. Please Try Again Later Genuinely Without Using Bots Or Automating Extensions.",
-          });
+          } else if (data.status) {
+            push(`/member/verify/email/${data.id_}.${data.token}`);
+          } else {
+            setproperties({
+              popup: true,
+              header: "Something Went Wrong",
+              body: "It Seems Like You're A Robot. Please Try Again Later Genuinely Without Using Bots Or Automating Extensions.",
+            });
+          }
+
           setisloading(false);
-        }
-      });
+        });
+      } else {
+        setproperties({
+          popup: true,
+          header: "Something Went Wrong",
+          body: "It Seems Like You're A Robot. Please Try Again Later Genuinely Without Using Bots Or Automating Extensions.",
+        });
+        setisloading(false);
+      }
+    });
   }
 
   return (
@@ -309,9 +298,13 @@ function Register() {
             )}
           </button>
         </div>
+        {/*  <label htmlFor="" className="py-3">
+          Or
+        </label>
+        <SocialAuth signup={true} signin={false} /> */}
       </div>
     </>
   );
 }
 
-export default isNotAuth(Register);
+export default Register;

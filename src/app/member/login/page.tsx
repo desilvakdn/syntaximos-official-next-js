@@ -1,17 +1,17 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import isNotAuth from "@/components/SingleWrappers/AuthWrapperUnProtected";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
-import Config from "@/resources/config";
 import {
   ArrowLeft,
   CheckCircle,
   XCircle,
 } from "@phosphor-icons/react/dist/ssr";
-import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { motion } from "framer-motion";
+import fetchPost from "@/modules/fetchPost";
+import SocialAuth from "../socialauth/socialauth";
 
 function Login() {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -47,72 +47,67 @@ function Login() {
 
     const gRecaptchaToken = await executeRecaptcha("login");
 
-    fetch(`${Config().api}/auth/recaptcha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `auth/recaptcha`,
+      {
         gRecaptchaToken: gRecaptchaToken,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          fetch(`${Config().api}/auth/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: properties.email,
-              password: properties.password,
-            }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              setProperties({ ...properties, isloading: false });
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        fetchPost(
+          `auth/login`,
+          {
+            email: properties.email,
+            password: properties.password,
+          },
+          true
+        )
+          .then((data) => {
+            setProperties({ ...properties, isloading: false });
 
-              if (!data.status && data.nonverified) {
-                openpopup(
-                  "You're Not Verified. Please Verify Your Email First",
-                  false
-                );
-                push(`/member/verify/email/${data.id_}.${data.token}`);
-              } else if (!data.status && data.setup) {
-                setProperties({
-                  ...properties,
-                  ispassresetneed: true,
-                  passresetemail: data.email,
-                });
-                setemailwp(data.email);
-              } else if (data.status) {
-                setCookie("syn_a", data.tokens.accesstoken);
-                setCookie("syn_r", data.tokens.refreshtoken);
-                setProperties({ ...properties, issuccesslogin: "valid" });
-                setTimeout(() => {
-                  setProperties({ ...properties, issuccesslogin: "" });
-                  window.location.reload();
-                }, 2000);
-              } else {
-                setProperties({ ...properties, issuccesslogin: "invalid" });
-                setTimeout(() => {
-                  setProperties({ ...properties, issuccesslogin: "" });
-                }, 3000);
-              }
-            })
-            .catch((e) => {
-              setProperties({ ...properties, isloading: false });
+            if (!data.status && data.nonverified) {
+              openpopup(
+                "You're Not Verified. Please Verify Your Email First",
+                false
+              );
+              push(`/member/verify/email/${data.id_}.${data.token}`);
+            } else if (!data.status && data.setup) {
+              setProperties({
+                ...properties,
+                ispassresetneed: true,
+                passresetemail: data.email,
+              });
+              setemailwp(data.email);
+            } else if (data.status) {
+              openpopup(
+                "Login Is Successfull. You Will be Redirected To Dashboard",
+                true
+              );
+              setProperties({ ...properties, issuccesslogin: "valid" });
+              setTimeout(() => {
+                setProperties({ ...properties, issuccesslogin: "" });
+                window.location.reload();
+              }, 2000);
+            } else {
               setProperties({ ...properties, issuccesslogin: "invalid" });
               setTimeout(() => {
                 setProperties({ ...properties, issuccesslogin: "" });
               }, 3000);
-            });
-        } else {
-          openpopup("Recaptcha Failed", false);
-          setProperties({ ...properties, isloading: false });
-        }
-      });
+            }
+          })
+          .catch((e) => {
+            setProperties({ ...properties, isloading: false });
+            setProperties({ ...properties, issuccesslogin: "invalid" });
+            setTimeout(() => {
+              setProperties({ ...properties, issuccesslogin: "" });
+            }, 3000);
+          });
+      } else {
+        openpopup("Recaptcha Failed", false);
+        setProperties({ ...properties, isloading: false });
+      }
+    });
   }
 
   function sendpasswordreset() {
@@ -126,30 +121,24 @@ function Login() {
     }
     setProperties({ ...properties, ispasswordresetsending: true });
 
-    fetch(`${Config().api}/auth/forgotpassword`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/forgotpassword",
+      {
         email: properties.passresetemail || emailwp,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setProperties({ ...properties, ispasswordresetsending: false });
-        if (data.status) {
-          push(`/member/verify/password/${data.id_}.${data.token}`);
-        } else {
-          setProperties({ ...properties, issuccesspassreset: "invalid" });
-          setTimeout(() => {
-            setProperties({ ...properties, issuccesspassreset: "" });
-          }, 3000);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      setProperties({ ...properties, ispasswordresetsending: false });
+      if (data.status) {
+        push(`/member/verify/password/${data.id_}.${data.token}`);
+      } else {
+        setProperties({ ...properties, issuccesspassreset: "invalid" });
+        setTimeout(() => {
+          setProperties({ ...properties, issuccesspassreset: "" });
+        }, 3000);
+      }
+    });
   }
-
-  function test() {}
 
   return (
     <>
@@ -235,80 +224,85 @@ function Login() {
           </div>
         </div>
       ) : (
-        <div className="flex-grow flex justify-center items-center flex-col min-h-[300px] md:min-h-[600px]">
+        <div className="flex-grow flex justify-center items-center flex-col min-h-[300px] md:min-h-[600px] pt-10 pb-[100px]">
           <h2>Login To Syntaximos</h2>
-          <p className="px-[10px] text-center">
-            Enter your credentials to login to your account
-          </p>
-          <div className="SlideIn0 min-w-[95%] md:min-w-[600px] mt-4 flex flex-col gap-2 justify-center items-center">
-            <input
-              className={`${
-                properties.issubmitclicked && !properties.email
-                  ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
-                  : ""
-              }`}
-              onChange={(e) =>
-                setProperties({ ...properties, email: e.target.value })
-              }
-              type="text"
-              name=""
-              id=""
-              placeholder="Enter Your Email"
-              value={properties.email}
-            />
-            <input
-              className={`${
-                properties.issubmitclicked && !properties.password
-                  ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
-                  : ""
-              }`}
-              onChange={(e) =>
-                setProperties({ ...properties, password: e.target.value })
-              }
-              value={properties.password}
-              type="password"
-              name=""
-              id=""
-              placeholder="Enter Your Password"
-            />
-            <button
-              onClick={submit}
-              className="w-full flex flex-row gap-2 items-center justify-center bg-synblue text-synwhite hover:bg-blue-950 hover:text-synwhite py-[15px]"
-            >
-              {properties.isloading ? (
-                <>
-                  <span>Processing</span>
-                  <LoadingDots width={20} fill="var(--synwhite)" />
-                </>
-              ) : properties.issuccesslogin === "" ? (
-                "Log In"
-              ) : properties.issuccesslogin === "valid" ? (
-                <>
-                  <span>Login Success</span>
-                  <CheckCircle size={20} weight="bold" />
-                </>
-              ) : (
-                <>
-                  <span>Provided Data Is Wrong</span>
-                  <XCircle size={20} weight="bold" />
-                </>
-              )}
-            </button>
-
-            <label
-              className="transition-all cursor-pointer hover:opacity-55"
-              htmlFor=""
-              onClick={() =>
-                setProperties({ ...properties, ispassresetneed: true })
-              }
-            >
-              Forgot Password ?
-            </label>
+          <div className="w-fit min-w-[95%] md:min-w-[600px] flex justify-center items-center flex-col bg-zinc-800 px-5 py-10 rounded drop-shadow-md">
+            <p className="px-[10px] text-center">
+              Enter your credentials to login to your account
+            </p>
+            <div className="SlideIn0 w-full  mt-4 flex flex-col gap-2 justify-center items-center">
+              <input
+                className={`${
+                  properties.issubmitclicked && !properties.email
+                    ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
+                    : ""
+                }`}
+                onChange={(e) =>
+                  setProperties({ ...properties, email: e.target.value })
+                }
+                type="text"
+                name=""
+                id=""
+                placeholder="Enter Your Email"
+                value={properties.email}
+              />
+              <input
+                className={`${
+                  properties.issubmitclicked && !properties.password
+                    ? "border-solid border-2 border-red-500 bg-red-300 placeholder-red-500"
+                    : ""
+                }`}
+                onChange={(e) =>
+                  setProperties({ ...properties, password: e.target.value })
+                }
+                value={properties.password}
+                type="password"
+                name=""
+                id=""
+                placeholder="Enter Your Password"
+              />
+              <label
+                className="transition-all cursor-pointer hover:opacity-55"
+                htmlFor=""
+                onClick={() =>
+                  setProperties({ ...properties, ispassresetneed: true })
+                }
+              >
+                Forgot Password ?
+              </label>
+              <button
+                onClick={submit}
+                className="w-full flex flex-row gap-2 items-center justify-center bg-synblue text-synwhite hover:bg-blue-950 hover:text-synwhite py-[15px]"
+              >
+                {properties.isloading ? (
+                  <>
+                    <span>Processing</span>
+                    <LoadingDots width={20} fill="var(--synwhite)" />
+                  </>
+                ) : properties.issuccesslogin === "" ? (
+                  "Log In"
+                ) : properties.issuccesslogin === "valid" ? (
+                  <>
+                    <span>Login Success</span>
+                    <CheckCircle size={20} weight="bold" />
+                  </>
+                ) : (
+                  <>
+                    <span>Provided Data Is Wrong</span>
+                    <XCircle size={20} weight="bold" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
+          {/* <label htmlFor="" className="py-3">
+            Or
+          </label>
+          <SocialAuth signup={false} signin={true} /> */}
         </div>
       )}
     </>
   );
 }
 
-export default isNotAuth(Login);
+export default Login;

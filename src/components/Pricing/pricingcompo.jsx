@@ -7,8 +7,12 @@ import { useRouter } from "next/navigation";
 import { useGlobalPopup } from "../SingleWrappers/MessageWrapper";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import Config from "@/resources/config";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
+import VerifyLogin from "@/utils/verifylogin";
 
 function PricingSection({ extid }) {
+  const [session, setsession] = useState(null);
   const [pgperiod, setpgPeriod] = useState(0);
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -16,6 +20,11 @@ function PricingSection({ extid }) {
   const { openpopup } = useGlobalPopup();
   const [isloading, setisloading] = useState(false);
   const [selected, setselected] = useState("");
+
+  useEffect(() => {
+    const session = VerifyLogin();
+    setsession(session);
+  }, []);
 
   /* const [stripePromise, setStripePromise] = useState(null);
   const [clientSecret, setClientSecret] = useState(""); */
@@ -31,29 +40,18 @@ function PricingSection({ extid }) {
   }, []); */
 
   useEffect(() => {
-    const accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/web/pricing/${extid}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken ? accesstoken : ""}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setLoading(false);
-        if (data.status) {
-          setData(data.data);
-        }
-      });
+    fetchGet(`web/pricing/${extid}`, true).then((data) => {
+      setLoading(false);
+      if (data.status) {
+        setData(data.data);
+      }
+    });
   }, [extid]);
 
   function purchase(identifier) {
     if (isloading) return;
-    const acc_token = getCookie("syn_a");
-    const ref_token = getCookie("syn_r");
 
-    if (!acc_token || !ref_token) {
+    if (!session) {
       openpopup("You need to login to subscribe", false);
       setTimeout(() => {
         push("/member/login");
@@ -64,28 +62,18 @@ function PricingSection({ extid }) {
 
     setisloading(true);
     if (identifier) {
-      fetch(`${Config().api}/stripe/initpayment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${acc_token}`,
-        },
-        body: JSON.stringify({ extid: extid, packageid: identifier }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setisloading(false);
-          if (data.refresh) {
-            openpopup("Your session has expired. Refreshing...", false);
-            setTimeout(() => {
-              window.location.reload();
-            }, 1500);
-          } else if (data.status) {
-            window.open(data.execute_url, "_blank");
-          } else {
-            openpopup(data.response, false);
-          }
-        });
+      fetchPost(
+        "stripe/initpayment",
+        { extid: extid, packageid: identifier },
+        true
+      ).then((data) => {
+        setisloading(false);
+        if (data.status) {
+          window.open(data.execute_url, "_blank");
+        } else {
+          openpopup(data.response, false);
+        }
+      });
     } else {
       setisloading(false);
       push("/member/dashboard/extensions");

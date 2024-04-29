@@ -1,13 +1,19 @@
 import VideoHolder from "@/components/Support n Guide/videoholder";
+import fetchGet from "@/modules/fetchGet";
 import Config from "@/resources/config";
 import { X } from "@phosphor-icons/react/dist/ssr";
 import React from "react";
 
+export async function generateStaticParams() {
+  const djson = await fetchGet(`web/extensions`, true);
+  return djson.data.map((itm: { identifier: string }) => itm.identifier);
+}
+
 async function Support({ params }: { params: { extid: String } }) {
-  const x = await fetch(
-    `${Config().api}/web/extensions/support/videos/${params.extid}`
+  const y = await fetchGet(
+    `web/extensions/support/videos/${params.extid}`,
+    true
   );
-  const y = await x.json();
 
   return (
     <div

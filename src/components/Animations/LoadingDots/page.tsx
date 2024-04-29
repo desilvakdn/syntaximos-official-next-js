@@ -23,9 +23,9 @@ export default function LoadingDots({
         cy="50"
         fill="none"
         stroke={fill}
-        stroke-width="18"
+        strokeWidth="18"
         r="41"
-        stroke-dasharray="193.20794819577225 66.40264939859075"
+        strokeDasharray="193.20794819577225 66.40264939859075"
       >
         <animateTransform
           attributeName="transform"

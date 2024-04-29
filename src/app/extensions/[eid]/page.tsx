@@ -4,9 +4,31 @@ import HeroExtensionSection from "@/components/ExtensionPage/herosection";
 import HowItWorks from "@/components/ExtensionPage/howitworks";
 import PricingSectionExtPage from "@/components/ExtensionPage/pricing";
 import QASection from "@/components/ExtensionPage/qanda";
+import fetchGet from "@/modules/fetchGet";
 import Config from "@/resources/config";
 import { X } from "@phosphor-icons/react/dist/ssr";
+import { Metadata } from "next";
 import React from "react";
+
+export async function generateStaticParams() {
+  const djson = await fetchGet(`web/extensions`, true);
+  return djson.data.map((itm: { identifier: string }) => itm.identifier);
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: {
+    eid: String;
+  };
+}): Promise<Metadata> {
+  const djson = await fetchGet(`web/extensions/details/${params.eid}`, true);
+  return {
+    title: djson.data.title,
+    description: djson.data.description_detail,
+    //keywords also needed
+  };
+}
 
 type ExtensionData = typeof extensiondata;
 const extensiondata = {
@@ -52,8 +74,7 @@ async function ExtensionPage({
     eid: String;
   };
 }) {
-  const d = await fetch(`${Config().api}/web/extensions/details/${params.eid}`);
-  const djson = await d.json();
+  const djson = await fetchGet(`web/extensions/details/${params.eid}`, true);
   //const data = djson.data;
   return (
     <>

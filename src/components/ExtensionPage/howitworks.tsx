@@ -9,12 +9,14 @@ function HowItWorks({ ytlink }: { ytlink: string }) {
         your gig rankings. So here&apos;s a brief showcase
       </label>
       <div className="w-full flex flex-col justify-center items-center">
-        <div className="mt-9 rounded-2xl overflow-hidden w-full aspect-w-16 aspect-h-9">
-          <iframe
-            src={ytlink}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          ></iframe>
+        <div className="w-full lg:w-[80%] lg:max-w-[1300px]">
+          <div className="mt-9 rounded-2xl overflow-hidden w-full aspect-w-16 aspect-h-9 relative">
+            <iframe
+              src={ytlink}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            ></iframe>
+          </div>
         </div>
       </div>
     </div>

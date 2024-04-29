@@ -6,6 +6,9 @@ import { getCookie } from "cookies-next";
 import React, { useEffect } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Config from "@/resources/config";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
+import VerifyLogin from "@/utils/verifylogin";
 
 function Contact() {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -27,34 +30,20 @@ function Contact() {
   const [issubmitting, setIssubmitting] = React.useState(false);
 
   useEffect(() => {
-    const acc_token = getCookie("syn_a");
-    const ref_token = getCookie("syn_r");
+    let usersession = VerifyLogin();
 
-    if (acc_token && ref_token) {
+    if (usersession) {
       setLock(true);
-    }
-
-    if (acc_token && ref_token) {
-      fetch(`${Config().api}/auth/userdetails`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${acc_token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.refresh) {
-            window.location.reload();
-          } else if (data.status) {
-            setDetails({
-              ...details,
-              name: data.data.name,
-              email: data.data.email,
-            });
-            setIspremium(data.data.premium);
-          }
-        });
+      fetchGet("auth/userdetails", true).then((data) => {
+        if (data.status) {
+          setDetails({
+            ...details,
+            name: data.data.name,
+            email: data.data.email,
+          });
+          setIspremium(data.data.premium);
+        }
+      });
     } else {
       setIspremium(false);
     }
@@ -117,48 +106,38 @@ function Contact() {
 
     setIssubmitting(true);
 
-    const acc_token = getCookie("syn_a");
-    fetch(`${Config().api}/auth/recaptcha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/recaptcha",
+      {
         gRecaptchaToken: gRecaptchaToken,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          fetch(`${Config().api}/web/contact`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: acc_token ? `Bearer ${acc_token}` : "",
-            },
-            body: JSON.stringify({
-              name: details.name,
-              email: details.email,
-              subject: details.subject,
-              message: details.message,
-            }),
-          })
-            .then((e) => e.json())
-            .then((data) => {
-              if (data.status) {
-                openpopup("Submitted Successfully", true);
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        fetchPost(
+          "web/contact",
+          {
+            name: details.name,
+            email: details.email,
+            subject: details.subject,
+            message: details.message,
+          },
+          true
+        ).then((data) => {
+          if (data.status) {
+            openpopup("Submitted Successfully", true);
 
-                setprevDetails(details);
-              } else {
-                openpopup(data.error, false);
-              }
-              setIssubmitting(false);
-            });
-        } else {
-          openpopup("Recaptcha Failed", false);
+            setprevDetails(details);
+          } else {
+            openpopup(data.error, false);
+          }
           setIssubmitting(false);
-        }
-      });
+        });
+      } else {
+        openpopup("Recaptcha Failed", false);
+        setIssubmitting(false);
+      }
+    });
   }
 
   return (

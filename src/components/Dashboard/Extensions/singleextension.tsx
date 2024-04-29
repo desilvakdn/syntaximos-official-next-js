@@ -1,6 +1,8 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
+import VerifyLogin from "@/utils/verifylogin";
 import {
   Check,
   CrownSimple,
@@ -37,28 +39,17 @@ function SingleExtension({
       return;
     }
 
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
-      return;
-    }
+    let usersession = VerifyLogin();
+    if (!usersession) return;
 
     setProps({ ...props, isloadingaddfree: true });
-    fetch(`${Config().api}/dashboard/extension/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({ identifier }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status && data.refresh) {
-          window.location.reload();
-        }
+    fetchPost("dashboard/extension/add", { identifier }, true).then((data) => {
+      if (data.status) {
+        window.location.reload();
+      }
 
-        setProps({ ...props, isloadingaddfree: false });
-      });
+      setProps({ ...props, isloadingaddfree: false });
+    });
   }
   return (
     <div className="SlideIn0 transition-all bg-synwhite w-[470px] text-synblack p-5 rounded relative hover:scale-[1.01]">

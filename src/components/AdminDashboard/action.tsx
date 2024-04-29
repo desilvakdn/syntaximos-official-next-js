@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import LoadingDots from "../Animations/LoadingDots/page";
 import Image from "next/image";
 import { useGlobalPopup } from "../SingleWrappers/MessageWrapper";
+import fetchPost from "@/modules/fetchPost";
+import fetchGet from "@/modules/fetchGet";
 
 function AdminAction() {
   const { openpopup } = useGlobalPopup();
@@ -52,29 +54,24 @@ function AdminAction() {
   });
   const [hotnewsmessage, sethotnewsmessage] = useState({
     headline: "",
+    content: "",
     status: false,
     link: "",
     linktext: "",
+    forpost: 0,
     readby: [],
   });
 
   useEffect(() => {
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/overview`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data: { status: Boolean; data: any[] }) => {
+    fetchGet("admin/overview", true).then(
+      (data: { status: Boolean; data: any[] }) => {
         setloading(false);
         if (data.status) {
           setdata(data.data);
         } else {
         }
-      });
+      }
+    );
   }, []);
 
   function submitmessage() {
@@ -89,25 +86,15 @@ function AdminAction() {
     )
       return;
 
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/news/submit`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          openpopup("Successfully Submitted", true);
-        } else {
-          openpopup("Something Went Wrong", false);
-        }
+    fetchPost("admin/news/submit", data, true).then((data) => {
+      if (data.status) {
+        openpopup("Successfully Submitted", true);
+      } else {
+        openpopup("Something Went Wrong", false);
+      }
 
-        setissubmitting(false);
-      });
+      setissubmitting(false);
+    });
   }
 
   function submitupdate() {
@@ -118,25 +105,15 @@ function AdminAction() {
 
     if (!data.identifier || !data.version) return;
 
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/news/notifyupdate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          openpopup("Successfully Submitted", true);
-        } else {
-          openpopup("Something Went Wrong", false);
-        }
+    fetchPost("admin/news/notifyupdate", data, true).then((data) => {
+      if (data.status) {
+        openpopup("Successfully Submitted", true);
+      } else {
+        openpopup("Something Went Wrong", false);
+      }
 
-        setissubmittingupdate(false);
-      });
+      setissubmittingupdate(false);
+    });
   }
 
   function submithotmessage() {
@@ -149,6 +126,8 @@ function AdminAction() {
       link?: string;
       linktext?: string;
       readby: never[];
+      content: string;
+      forpost: number;
     } = hotnewsmessage;
 
     if (
@@ -163,25 +142,15 @@ function AdminAction() {
       data = { ...data, link: "", linktext: "" };
     }
 
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/hotnews/post`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ post: data }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          openpopup("Successfully Submitted", true);
-        } else {
-          openpopup("Something Went Wrong", false);
-        }
+    fetchPost("admin/hotnews/post", { post: data }, true).then((data) => {
+      if (data.status) {
+        openpopup("Successfully Submitted", true);
+      } else {
+        openpopup("Something Went Wrong", false);
+      }
 
-        setissubmittinghotpost(false);
-      });
+      setissubmittinghotpost(false);
+    });
   }
 
   return (
@@ -422,6 +391,24 @@ function AdminAction() {
             />
           </div>
           <div>
+            <h3>Content</h3>
+            <textarea
+              onChange={(e) =>
+                sethotnewsmessage((prev) => ({
+                  ...prev,
+                  content: e.target.value,
+                }))
+              }
+              value={hotnewsmessage.content}
+              cols={180}
+              rows={10}
+              spellCheck={false}
+              name=""
+              id=""
+              className="max-w-[800px]  rounded text-synblack p-3 outline-none border-none"
+            />
+          </div>
+          <div>
             <h3>Link</h3>
             <div className="flex flex-row gap-1 mb-3">
               <input
@@ -501,16 +488,60 @@ function AdminAction() {
                 <label htmlFor="">Failed</label>
               </div>
             </div>
-            <div className="flex flex-row gap-1 mt-4">
-              <button onClick={submithotmessage}>
-                {issubmittinghotpost ? (
-                  <LoadingDots width={25} fill="black" />
-                ) : (
-                  "Submit"
-                )}
-              </button>
-              <button onClick={() => setnewhotpost(false)}>Cancel</button>
+          </div>
+          <div>
+            <h3>Whom To Post</h3>
+            <div className="flex flex-row gap-10">
+              <div className="flex flex-row gap-1">
+                <input
+                  checked={hotnewsmessage.forpost === 0 ? true : false}
+                  type="radio"
+                  name=""
+                  id=""
+                  className="w-fit"
+                  onChange={() =>
+                    sethotnewsmessage((prev) => ({ ...prev, forpost: 0 }))
+                  }
+                />
+                <label htmlFor="">All</label>
+              </div>
+              <div className="flex flex-row gap-1">
+                <input
+                  checked={hotnewsmessage.forpost === 1 ? true : false}
+                  type="radio"
+                  name=""
+                  id=""
+                  className="w-fit"
+                  onChange={() =>
+                    sethotnewsmessage((prev) => ({ ...prev, forpost: 1 }))
+                  }
+                />
+                <label htmlFor="">Free Only</label>
+              </div>
+              <div className="flex flex-row gap-1">
+                <input
+                  checked={hotnewsmessage.forpost === 2 ? true : false}
+                  type="radio"
+                  name=""
+                  id=""
+                  className="w-fit"
+                  onChange={() =>
+                    sethotnewsmessage((prev) => ({ ...prev, forpost: 2 }))
+                  }
+                />
+                <label htmlFor="">Premium Only</label>
+              </div>
             </div>
+          </div>
+          <div className="flex flex-row gap-1 mt-4">
+            <button onClick={submithotmessage}>
+              {issubmittinghotpost ? (
+                <LoadingDots width={25} fill="black" />
+              ) : (
+                "Submit"
+              )}
+            </button>
+            <button onClick={() => setnewhotpost(false)}>Cancel</button>
           </div>
         </>
       )}

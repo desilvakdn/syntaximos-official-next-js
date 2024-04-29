@@ -1,5 +1,6 @@
 "use client";
 import PricingSection from "@/components/Pricing/pricingcompo";
+import fetchGet from "@/modules/fetchGet";
 import Config from "@/resources/config";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
@@ -21,9 +22,9 @@ function ExtensionPricings() {
   const [extidentifiers, setExtidentifiers] = useState<Identifier[]>([]);
 
   useEffect(() => {
-    fetch(`${Config().api}/web/extidentifiers`)
-      .then((res) => res.json())
-      .then((data) => setExtidentifiers(data.data));
+    fetchGet(`web/extidentifiers`, true).then((data) =>
+      setExtidentifiers(data.data)
+    );
   }, []);
 
   return (

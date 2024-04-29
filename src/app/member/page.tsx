@@ -14,7 +14,7 @@ async function Member() {
   ];
 
   return (
-    <div className="flex-grow flex justify-center items-center flex-col">
+    <div className="flex-grow flex justify-center items-center flex-col min-h-[600px]">
       <h2>Welcome To Syntaximos</h2>
       <p className="text-center px-[15px]">
         You&apos;re One step is away to become a syntaximos or enter to the

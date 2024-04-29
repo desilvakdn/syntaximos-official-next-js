@@ -3,7 +3,10 @@ import LoadingDots from "@/components/Animations/LoadingDots/page";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import ConfirmBasic from "@/components/popups/ConfirmBasic/page";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
+import VerifyLogin from "@/utils/verifylogin";
 import { Play } from "@phosphor-icons/react";
 import {
   CrownSimple,
@@ -55,20 +58,10 @@ function SingleAddon({
   const [iscancellingpremium, setIscancellingpremium] = useState(false);
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/pastkey/${item.identifier}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    item.identifier &&
+      fetchGet(`dashboard/pastkey/${item.identifier}`, true).then((data) => {
         setkeyschecker(false);
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
+        if (data.status) {
           setsecretkey(data.key);
         } else {
           setsecretkey("");
@@ -81,10 +74,8 @@ function SingleAddon({
       return;
     }
 
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
-      return;
-    }
+    let usersession = VerifyLogin();
+    if (!usersession) return;
 
     if (ispremium) {
       setProps({
@@ -99,17 +90,9 @@ function SingleAddon({
     }
 
     setProps({ ...props, isloadingremove: true });
-    fetch(`${Config().api}/dashboard/extension/remove`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({ identifier }),
-    })
-      .then((res) => res.json())
+    fetchPost("dashboard/extension/remove", { identifier }, true)
       .then((data) => {
-        if (data.status && data.refresh) {
+        if (data.status) {
           openpopup("Extension Removed Successfully", true);
 
           setTimeout(() => {
@@ -126,10 +109,8 @@ function SingleAddon({
   }
 
   function CancelPremium() {
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
-      return;
-    }
+    let usersession = VerifyLogin();
+    if (!usersession) return;
 
     setIscancellingpremium(true);
     setTimeout(() => {
@@ -139,77 +120,50 @@ function SingleAddon({
   }
 
   function ManagePremium() {
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
-      return;
-    }
+    let usersession = VerifyLogin();
+    if (!usersession) return;
     setIscancellingpremium(true);
 
-    fetch(`${Config().api}/stripe/managebilling`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setIscancellingpremium(false);
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          window.open(data.url, "_blank");
-        }
-      });
+    fetchPost("stripe/managebilling", {}, true).then((data) => {
+      setIscancellingpremium(false);
+      if (data.status) {
+        window.open(data.url, "_blank");
+      }
+    });
   }
 
   useEffect(() => {
-    const acc_token = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/subend/${item.identifier}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${acc_token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status && data.iscancel) {
-          setIscancelatend(true);
-        } else if (data.status && !data.iscancel) {
-          setIscancelatend(false);
-        }
-      })
-      .catch((e) => {});
+    item.identifier &&
+      fetchGet(`stripe/subend/${item.identifier}`, true)
+        .then((data) => {
+          if (data.status && data.iscancel) {
+            setIscancelatend(true);
+          } else if (data.status && !data.iscancel) {
+            setIscancelatend(false);
+          }
+        })
+        .catch((e) => {});
   }, []);
 
   function confirmupdate() {
     if (isupdating) return;
 
     setisupdating(true);
-    const acc_token = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/addon/confirmupdate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${acc_token}`,
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "dashboard/addon/confirmupdate",
+      {
         identifier: item.identifier,
         version: item.version,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setisupdating(false);
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setconfirmedupdate(true);
-        } else {
-          openpopup("Something Went Wrong. Please Try Again Later", false);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      setisupdating(false);
+      if (data.status) {
+        setconfirmedupdate(true);
+      } else {
+        openpopup("Something Went Wrong. Please Try Again Later", false);
+      }
+    });
   }
 
   return (

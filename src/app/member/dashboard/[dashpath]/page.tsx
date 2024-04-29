@@ -4,10 +4,9 @@ import ExtensionsDashboard from "@/components/Dashboard/Extensions/extensions";
 import Myaddons from "@/components/Dashboard/My Addons/myaddons";
 import NewMiniCompo from "@/components/Dashboard/Other/newsminicompo";
 import Setting from "@/components/Dashboard/Setting/setting";
-import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
 import SyntaximosLogo from "@/Icons/syntaximoswordlogo";
 import Config from "@/resources/config";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BoundingBox,
   Check,
@@ -23,6 +22,8 @@ import { deleteCookie, getCookie } from "cookies-next";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
 
 function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const { push } = useRouter();
@@ -63,7 +64,10 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     linktext: "",
     link: "",
     id: 34774437,
+    content: "",
+    forpost: 0,
   });
+  const [seefull, setseefull] = useState(false);
 
   let navlabel = {
     extensions: "Extensions",
@@ -92,141 +96,89 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   let selectedclass_ = `flex flex-row gap-2 items-center justify-center transition-all bg-synblue p-3 rounded`;
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/firstname`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setFirstname(data.data);
-        }
-      });
+    fetchGet(`dashboard/firstname`, true).then((data) => {
+      if (data.status) {
+        setFirstname(data.data);
+      }
+    });
   }, []);
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/news/get`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status && data?.data?.length > 0) {
-          setnews(data.data);
+    fetchGet(`dashboard/news/get`, true).then((data) => {
+      if (data.status && data?.data?.length > 0) {
+        setnews(data.data);
+      } else {
+        setnews([
+          {
+            id: 0,
+            message: "",
+            headline: "",
+            date: new Date(),
+            isread: false,
+          },
+        ]);
+      }
+    });
+
+    fetchGet(`dashboard/hotnews/get`, true).then(
+      (data: {
+        refresh: Boolean;
+        status: Boolean;
+        data: {
+          headline: string;
+          status: boolean;
+          link: string;
+          linktext: string;
+          content: string;
+          forpost: number;
+          id: number;
+        };
+      }) => {
+        if (data.status) {
+          sethotnews({
+            headline: data.data.headline,
+            status: data.data.status,
+            linktext: data.data.linktext,
+            link: data.data.link,
+            id: data.data.id, // Convert to string if id is a number
+            content: data.data.content,
+            forpost: data.data.forpost,
+          });
         } else {
-          setnews([
-            {
-              id: 0,
-              message: "",
-              headline: "",
-              date: new Date(),
-              isread: false,
-            },
-          ]);
+          sethotnews({
+            headline: "",
+            status: false,
+            linktext: "",
+            link: "",
+            id: 34774437,
+            content: "",
+            forpost: 0,
+          });
         }
-      });
-
-    fetch(`${Config().api}/dashboard/hotnews/get`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then(
-        (data: {
-          refresh: Boolean;
-          status: Boolean;
-          data: {
-            headline: string;
-            status: boolean;
-            link: string;
-            linktext: string;
-            id: number;
-          };
-        }) => {
-          if (data.refresh) {
-            window.location.reload();
-          } else if (data.status) {
-            sethotnews({
-              headline: data.data.headline,
-              status: data.data.status,
-              linktext: data.data.linktext,
-              link: data.data.link,
-              id: data.data.id, // Convert to string if id is a number
-            });
-          } else {
-            sethotnews({
-              headline: "",
-              status: false,
-              linktext: "",
-              link: "",
-              id: 34774437,
-            });
-          }
-        }
-      );
+      }
+    );
   }, []);
 
   useEffect(() => {
-    const acc_token = getCookie("syn_a");
-    const ref_token = getCookie("syn_r");
-
-    if (acc_token && ref_token) {
-      fetch(`${Config().api}/auth/userdetails`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${acc_token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.refresh) {
-            window.location.reload();
-          } else if (data.status) {
-            setIspremium(data.data.premium);
-          }
-        });
-    } else {
-      setIspremium(false);
-    }
+    fetchGet(`auth/userdetails`, true).then((data) => {
+      if (data.status) {
+        setIspremium(data.data.premium);
+      }
+    });
   }, []);
 
   async function logout() {
     setProperties({ activetab: 4 });
 
-    const accesstoken = getCookie("syn_a");
     try {
-      const response = await fetch(`${Config().api}/auth/logout`, {
-        method: "POST", // or any other method
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accesstoken}`,
-        },
-      });
+      const data = await fetchPost(`auth/logout`, {}, true);
 
-      const data = await response.json();
-
-      if (data.status) {
-        deleteCookie("syn_a");
-        deleteCookie("syn_r");
+      if (data?.status || data?.expired) {
+        deleteCookie("SYNU");
+        localStorage.clear();
         window.location.reload();
       } else {
-        window.location.reload();
+        openpopup("Something Went Wrong", false);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -234,44 +186,29 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   }
 
   function setmarkread(id: number) {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/news/markread`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `dashboard/news/markread`,
+      {
         messageid: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          //setnews(data.data);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        //setnews(data.data);
+      }
+    });
   }
 
   async function removemessage(id: number) {
-    let accesstoken = getCookie("syn_a");
-    return fetch(`${Config().api}/dashboard/news/delete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({
+    return fetchPost(
+      `dashboard/news/delete`,
+      {
         messageid: id,
-      }),
-    })
-      .then((res) => res.json())
+      },
+      true
+    )
       .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
+        if (data.status) {
           setnews(data.data);
         }
       })
@@ -281,22 +218,15 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   }
 
   function hotnewsread() {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/hotnews/read`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `dashboard/hotnews/read`,
+      {
         id: hotnews.id,
-      }),
-    })
-      .then((res) => res.json())
+      },
+      true
+    )
       .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
+        if (data.status) {
           openpopup("Message Removed Successfully", true);
           sethotnews({
             headline: "",
@@ -304,6 +234,8 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
             linktext: "",
             link: "",
             id: 34774437,
+            content: "",
+            forpost: 0,
           });
         } else {
           openpopup("Message Removed Failed", false);
@@ -323,7 +255,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, ease: "backInOut" }}
             className={`min-w-[500px] ${
-              news[0].headline ? "min-h-[50%]" : "min-h-[20%]"
+              news[0] && news[0]?.headline ? "min-h-[50%]" : "min-h-[20%]"
             } max-h-[80%] bg-white rounded flex flex-col gap-1 `}
           >
             <div className="text-synblack px-5 relative">
@@ -337,7 +269,8 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               </label>
             </div>
             <div className="flex-grow px-4 flex flex-col gap-2 overflow-y-auto py-2">
-              {news[0].headline &&
+              {news[0] &&
+                news[0]?.headline &&
                 news.map((singlenews, index) => {
                   return (
                     <NewMiniCompo
@@ -352,7 +285,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
                   );
                 })}
 
-              {!news[0].headline && (
+              {!news[0]?.headline && (
                 <div className="text-synblack opacity-60">
                   <label htmlFor="">
                     You Don&apos;t Have Any Announcements
@@ -385,7 +318,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
                   onClick={() => push(item.url)}
                   htmlFor=""
                   className={
-                    path.includes(item.identifier) ? selectedclass_ : class_
+                    path?.includes(item.identifier) ? selectedclass_ : class_
                   }
                 >
                   {item.icon} {item.name}
@@ -398,7 +331,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               onClick={() => push(menuitems[menuitems.length - 1].url)}
               htmlFor=""
               className={
-                path.includes(menuitems[menuitems.length - 1].identifier)
+                path?.includes(menuitems[menuitems.length - 1].identifier)
                   ? selectedclass_
                   : class_
               }
@@ -420,7 +353,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               <button className="relative" onClick={() => setopennews(true)}>
                 <Envelope size={26} weight="bold" />
                 <span className="absolute top-[-10px] right-[-10px] bg-yellow-500 px-1 rounded text-sm">
-                  {!news[0].headline
+                  {!news[0]?.headline
                     ? 0
                     : news.length > 0 &&
                       news.reduce(
@@ -457,36 +390,60 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
             </div>
           </div>
           {hotnews.headline && (
-            <div
+            <motion.div
               className={`w-full ${
                 hotnews.status ? "bg-lime-300" : "bg-red-400"
-              } min-h-10 rounded flex flex-row gap-1 items-center justify-between px-10 text-synblack`}
+              }  rounded flex flex-col gap-1 justify-center text-synblack  `}
             >
-              <div className="flex flex-row gap-1 items-center ">
-                <label htmlFor="">
-                  {hotnews.status ? (
-                    <Check size={22} weight="bold" />
-                  ) : (
-                    <X size={22} weight="bold" />
+              <div className="w-full flex flex-row gap-1 items-center justify-between px-10 py-4 ">
+                <div className="flex flex-row gap-1 items-center ">
+                  <label htmlFor="">
+                    {hotnews.status ? (
+                      <Check size={22} weight="bold" />
+                    ) : (
+                      <X size={22} weight="bold" />
+                    )}
+                  </label>
+                  <label htmlFor="">{hotnews.headline}</label>
+                  {hotnews.content && (
+                    <button
+                      onClick={() =>
+                        setseefull((seefull) => (seefull ? false : true))
+                      }
+                      className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
+                    >
+                      {seefull ? "See Less" : "See More"}
+                    </button>
                   )}
-                </label>
-                <label htmlFor="">{hotnews.headline}</label>
-                {hotnews.link && (
-                  <button
-                    onClick={() => window.open(hotnews.link, "_blank")}
-                    className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
-                  >
-                    {hotnews.linktext}
-                  </button>
-                )}
+                  {hotnews.link && (
+                    <button
+                      onClick={() => window.open(hotnews.link, "_blank")}
+                      className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
+                    >
+                      {hotnews.linktext}
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={hotnewsread}
+                  className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
+                >
+                  Mark Read
+                </button>
               </div>
-              <button
-                onClick={hotnewsread}
-                className="bg-synblack text-synwhite m-0 p-0 px-4 ml-3 hover:bg-synwhite hover:text-synblack"
-              >
-                Mark Read
-              </button>
-            </div>
+              {seefull && (
+                <AnimatePresence>
+                  <motion.div
+                    initial={{ opacity: 0.6, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="mt-3 bg-lime-100 px-10 py-5"
+                  >
+                    {hotnews.content}
+                  </motion.div>
+                </AnimatePresence>
+              )}
+            </motion.div>
           )}
           <div className="w-full h-full flex-grow-1 bg-zinc-900  rounded flex flex-col gap-3">
             {
@@ -504,4 +461,4 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   );
 }
 
-export default isAuth(DashboardItems);
+export default DashboardItems;

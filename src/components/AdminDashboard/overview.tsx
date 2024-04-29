@@ -3,6 +3,7 @@ import Config from "@/resources/config";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useState } from "react";
 import LoadingDots from "../Animations/LoadingDots/page";
+import fetchGet from "@/modules/fetchGet";
 
 function AdminOverView() {
   const [isloading, setloading] = useState(true);
@@ -22,22 +23,15 @@ function AdminOverView() {
   ]);
 
   useEffect(() => {
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/overview`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data: { status: Boolean; data: any[] }) => {
+    fetchGet("admin/overview", true).then(
+      (data: { status: Boolean; data: any[] }) => {
         setloading(false);
         if (data.status) {
           setdata(data.data);
         } else {
         }
-      });
+      }
+    );
   }, []);
 
   return (

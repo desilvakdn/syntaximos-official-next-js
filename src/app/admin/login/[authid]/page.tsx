@@ -1,7 +1,8 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
-import isNotAuthAdmin from "@/components/SingleWrappers/AuthWrapperUnProtectedAdmin";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
 import { CheckCircle, X, XCircle } from "@phosphor-icons/react/dist/ssr";
 import { setCookie } from "cookies-next";
@@ -37,21 +38,14 @@ function Admin({
   });
 
   useEffect(() => {
-    fetch(`${Config().api}/admin/authcheck/${params.authid}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setloading(false);
-        if (data.status) {
-          setverified(true);
-        } else {
-          setverified(false);
-        }
-      });
+    fetchGet(`admin/authcheck/${params.authid}`, true).then((data) => {
+      setloading(false);
+      if (data.status) {
+        setverified(true);
+      } else {
+        setverified(false);
+      }
+    });
   }, []);
 
   async function submit() {
@@ -69,59 +63,51 @@ function Admin({
 
     const gRecaptchaToken = await executeRecaptcha("login");
 
-    fetch(`${Config().api}/auth/recaptcha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "auth/recaptcha",
+      {
         gRecaptchaToken: gRecaptchaToken,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          fetch(`${Config().api}/admin/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: properties.email,
-              username: properties.username,
-              password: properties.password,
-            }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              setProperties({ ...properties, isloading: false });
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        fetchPost(
+          "admin/login",
+          {
+            email: properties.email,
+            username: properties.username,
+            password: properties.password,
+          },
+          true
+        )
+          .then((data) => {
+            setProperties({ ...properties, isloading: false });
 
-              if (data.status) {
-                setCookie("syn_admin", data.tokens.accesstoken);
-                setProperties({ ...properties, issuccesslogin: "valid" });
-                setTimeout(() => {
-                  setProperties({ ...properties, issuccesslogin: "" });
-                  window.location.reload();
-                }, 2000);
-              } else {
-                setProperties({ ...properties, issuccesslogin: "invalid" });
-                setTimeout(() => {
-                  setProperties({ ...properties, issuccesslogin: "" });
-                }, 3000);
-              }
-            })
-            .catch((e) => {
-              setProperties({ ...properties, isloading: false });
+            if (data.status) {
+              setProperties({ ...properties, issuccesslogin: "valid" });
+              setTimeout(() => {
+                setProperties({ ...properties, issuccesslogin: "" });
+                window.location.reload();
+              }, 2000);
+            } else {
               setProperties({ ...properties, issuccesslogin: "invalid" });
               setTimeout(() => {
                 setProperties({ ...properties, issuccesslogin: "" });
               }, 3000);
-            });
-        } else {
-          openpopup("Recaptcha Failed", false);
-          setProperties({ ...properties, isloading: false });
-        }
-      });
+            }
+          })
+          .catch((e) => {
+            setProperties({ ...properties, isloading: false });
+            setProperties({ ...properties, issuccesslogin: "invalid" });
+            setTimeout(() => {
+              setProperties({ ...properties, issuccesslogin: "" });
+            }, 3000);
+          });
+      } else {
+        openpopup("Recaptcha Failed", false);
+        setProperties({ ...properties, isloading: false });
+      }
+    });
   }
 
   return (
@@ -220,4 +206,4 @@ function Admin({
   );
 }
 
-export default isNotAuthAdmin(Admin);
+export default Admin;

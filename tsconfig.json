@@ -28,7 +28,9 @@
     ".next/types/**/*.ts",
     "src/resources/companylogos.js",
     "src/resources/companylogos.jsx",
-    "src/components/Pricing/pricingcompo.jsx"
-, "tailwind.config.js"  ],
+    "src/components/Pricing/pricingcompo.jsx",
+    "tailwind.config.js",
+    "/src/middleware.ts"
+  ],
   "exclude": ["node_modules"]
 }

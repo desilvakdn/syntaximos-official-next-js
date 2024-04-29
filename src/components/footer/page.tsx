@@ -5,11 +5,10 @@ import {
   TwitterLogo,
   YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
-import React, { useContext, useEffect, useState } from "react";
-import AuthContext from "../SingleWrappers/AuthProvider";
+import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Config from "@/resources/config";
 import SyntaximosLogo from "@/Icons/syntaximoswordlogo";
+import fetchGet from "@/modules/fetchGet";
 
 interface ExtDetailsResponse {
   status: boolean;
@@ -22,28 +21,25 @@ interface ExtensionData {
 }
 
 function Footer() {
-  const { isloggedin, userid } = useContext(AuthContext);
   const pathname = usePathname();
   const { push } = useRouter();
   const [extensiondata, setextensiondata] = useState<ExtensionData[]>([]);
   const [hasmoreext, sethasmoreext] = useState(false);
 
   useEffect(() => {
-    fetch(`${Config().api}/web/extensions`)
-      .then((i) => i.json())
-      .then((data: ExtDetailsResponse) => {
-        if (data.status) {
-          let r = data.data.map((item) => ({
-            name: item.name,
-            identifier: item.identifier,
-          }));
-          r = shuffleArray(r);
-          if (r.length > 4) {
-            sethasmoreext(true);
-          }
-          setextensiondata(r.length > 4 ? r.slice(4) : r);
+    fetchGet("web/extensions", true).then((data: ExtDetailsResponse) => {
+      if (data.status) {
+        let r = data.data.map((item) => ({
+          name: item.name,
+          identifier: item.identifier,
+        }));
+        r = shuffleArray(r);
+        if (r.length > 4) {
+          sethasmoreext(true);
         }
-      });
+        setextensiondata(r.length > 4 ? r.slice(4) : r);
+      }
+    });
   }, []);
 
   let legal = [
@@ -65,12 +61,13 @@ function Footer() {
     },
   ];
 
+  useEffect(() => {}, []);
+
   return (
     <>
       {!(
-        isloggedin &&
-        (pathname.includes("/member/dashboard") ||
-          pathname.includes("/admin/dashboard"))
+        pathname?.includes("/member/dashboard") ||
+        pathname?.includes("/admin/dashboard")
       ) && (
         <div className="mt-auto bg-zinc-900 min-h-72 rounded flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-8">
@@ -137,6 +134,9 @@ function Footer() {
               <label
                 htmlFor=""
                 className="hover:scale-[1.1] transition-all hover:text-synblue cursor-pointer"
+                onClick={() =>
+                  window.open("https://facebook.com/syntaximos", "_blank")
+                }
               >
                 <FacebookLogo size={32} weight="fill" />
               </label>
@@ -161,6 +161,9 @@ function Footer() {
               <label
                 htmlFor=""
                 className="hover:scale-[1.1] transition-all hover:text-blue-400 cursor-pointer"
+                onClick={() =>
+                  window.open("https://twitter.com/syntaximos", "_blank")
+                }
               >
                 <TwitterLogo size={32} weight="fill" />
               </label>

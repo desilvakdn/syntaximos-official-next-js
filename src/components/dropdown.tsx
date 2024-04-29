@@ -330,7 +330,7 @@ function DropDown({
         )}
       </AnimatePresence>
       <div
-        className="flex flex-grow w-full relative cursor-pointer"
+        className="flex flex-grow w-full relative cursor-pointer min-h-[45px]"
         onClick={() => setopenpop(true)}
       >
         <div

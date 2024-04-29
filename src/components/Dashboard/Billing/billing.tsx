@@ -9,6 +9,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import CardForm from "./cardform";
 import Config from "@/resources/config";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchPost from "@/modules/fetchPost";
+import fetchGet from "@/modules/fetchGet";
 
 function Billing() {
   const [pms, setPms] = useState([]);
@@ -18,42 +20,20 @@ function Billing() {
   const { openpopup } = useGlobalPopup();
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/config`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((e) => e.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setStripePromise(loadStripe(data.publish));
-        }
-      });
+    fetchGet("stripe/config", true).then((data) => {
+      if (data.status) {
+        setStripePromise(loadStripe(data.publish));
+      }
+    });
   }, []);
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/addpm`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((e) => e.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setclientSecret(data.clientsecret);
-          //setintentid(data.id);
-        }
-      });
+    fetchGet("stripe/addpm", true).then((data) => {
+      if (data.status) {
+        setclientSecret(data.clientsecret);
+        //setintentid(data.id);
+      }
+    });
   }, []);
 
   const [props, setprops] = useState({
@@ -63,35 +43,24 @@ function Billing() {
   const [addpmclicked, setaddpmclicked] = useState(false);
 
   useEffect(() => {
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/getpm`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          const arranged_: any[] = [];
-          const primary_ = data.data.find((e: any) => e.primary);
-          if (primary_) {
-            arranged_.push(primary_);
-          }
-
-          data.data.forEach((e: any) => {
-            if (!e.primary) {
-              arranged_.push(e);
-            }
-          });
-
-          setPms(arranged_ as never[]);
+    fetchGet("stripe/getpm", true).then((data) => {
+      if (data.status) {
+        const arranged_: any[] = [];
+        const primary_ = data.data.find((e: any) => e.primary);
+        if (primary_) {
+          arranged_.push(primary_);
         }
-        setprops({ ...props, isfetchingpms: false });
-      });
+
+        data.data.forEach((e: any) => {
+          if (!e.primary) {
+            arranged_.push(e);
+          }
+        });
+
+        setPms(arranged_ as never[]);
+      }
+      setprops({ ...props, isfetchingpms: false });
+    });
   }, []);
 
   function managebillingaccount() {
@@ -99,31 +68,19 @@ function Billing() {
 
     setisfetchingbilling(true);
 
-    const token_ = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/managebilling`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token_}`,
-      },
-      body: JSON.stringify({}),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setisfetchingbilling(false);
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.nocustomer) {
-          openpopup(
-            "Sorry. You Don't Have A Billing Account. Purchase Premium Subscription",
-            false
-          );
-        } else if (data.status) {
-          window.open(data.url, "_blank");
-        } else {
-          openpopup("Something Went Wrong", false);
-        }
-      });
+    fetchPost("stripe/managebilling", {}, true).then((data) => {
+      setisfetchingbilling(false);
+      if (data.nocustomer) {
+        openpopup(
+          "Sorry. You Don't Have A Billing Account. Purchase Premium Subscription",
+          false
+        );
+      } else if (data.status) {
+        window.open(data.url, "_blank");
+      } else {
+        openpopup("Something Went Wrong", false);
+      }
+    });
   }
 
   return (

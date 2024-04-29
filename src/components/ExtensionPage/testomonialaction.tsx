@@ -23,11 +23,17 @@ function TestomonialAction({
   }
 
   useEffect(() => {
+    let reviewsmodified = reviews.filter(
+      (sinreview) =>
+        !sinreview.comment.toLowerCase().includes("fake") &&
+        !sinreview.comment.toLowerCase().includes("bad") &&
+        !sinreview.comment.toLowerCase().includes("scam")
+    );
     if (viewall) {
-      let g = shuffleArray(reviews);
+      let g = shuffleArray(reviewsmodified);
       setreviewsview(g);
     } else {
-      let g = shuffleArray(reviews);
+      let g = shuffleArray(reviewsmodified);
       setreviewsview(g.slice(0, 7));
     }
   }, [viewall]);

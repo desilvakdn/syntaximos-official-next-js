@@ -1,6 +1,7 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
 import { DotsThreeOutline } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";
@@ -57,28 +58,16 @@ function SinglePaymentCard({ data }: { data: SinglePaymentCardProps }) {
       return;
     }
 
-    let accesstoken = getCookie("syn_a");
     setprops({ ...props, ismakingprimary: true });
-    fetch(`${Config().api}/stripe/setprimarypm`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({ id: data.id }),
-    })
-      .then((e) => e.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          openpopup("Card Set As Primary", true);
-        } else {
-          openpopup("Failed to Set As Primary", false);
-        }
-        setprops({ ...props, ismakingprimary: false });
-        setClickeddots(false);
-      });
+    fetchPost("stripe/setprimarypm", { id: data.id }, true).then((data) => {
+      if (data.status) {
+        openpopup("Card Set As Primary", true);
+      } else {
+        openpopup("Failed to Set As Primary", false);
+      }
+      setprops({ ...props, ismakingprimary: false });
+      setClickeddots(false);
+    });
   }
 
   function removecard() {
@@ -87,30 +76,22 @@ function SinglePaymentCard({ data }: { data: SinglePaymentCardProps }) {
     }
     setprops({ ...props, isremovingcard: true });
 
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/stripe/removecard`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-      body: JSON.stringify({
+    fetchPost(
+      "stripe/removecard",
+      {
         id: data.id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setprops({ ...props, isremovingcard: false });
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          openpopup("Card Removed Successfully", true);
-        } else {
-          openpopup("Failed to Remove Card", false);
-        }
-        setClickeddots(false);
-        setprops({ ...props, isremovingcard: false });
-      });
+      },
+      true
+    ).then((data) => {
+      setprops({ ...props, isremovingcard: false });
+      if (data.status) {
+        openpopup("Card Removed Successfully", true);
+      } else {
+        openpopup("Failed to Remove Card", false);
+      }
+      setClickeddots(false);
+      setprops({ ...props, isremovingcard: false });
+    });
   }
   return (
     <div

@@ -7,6 +7,8 @@ import { getCookie } from "cookies-next";
 import Config from "@/resources/config";
 import { Check, X } from "@phosphor-icons/react/dist/ssr";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import fetchGet from "@/modules/fetchGet";
+import VerifyLogin from "@/utils/verifylogin";
 
 interface Extension {
   icon: string;
@@ -48,52 +50,30 @@ function Myaddons() {
 
   useEffect(() => {
     setLoading(true);
-    let accesstoken = getCookie("syn_a");
-    if (!accesstoken) {
+    if (!VerifyLogin()) {
       setLoading(false);
       return;
     }
-    fetch(`${Config().api}/dashboard/myaddons`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setExt(data.data);
-        }
-        setLoading(false);
-      });
+    fetchGet("dashboard/myaddons", true).then((data) => {
+      if (data.status && data?.data?.length > 0) {
+        setExt(data.data);
+      }
+      setLoading(false);
+    });
   }, []);
 
   function requestkey() {
     if (secretkeyloading || requestedkey) return;
     setsecretkeyloading(true);
 
-    let accesstoken = getCookie("syn_a");
-    fetch(`${Config().api}/dashboard/key/${activeextensionid}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accesstoken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setsecretkeyloading(false);
-        if (data.refresh) {
-          window.location.reload();
-        } else if (data.status) {
-          setsecretkey(data.key);
-          setrequestedkey(true);
-          setTimeout(() => {
-            setrequestedkey(false);
-            /* setsecretkey(
+    fetchGet(`dashboard/key/${activeextensionid}`, true).then((data) => {
+      setsecretkeyloading(false);
+      if (data.status) {
+        setsecretkey(data.key);
+        setrequestedkey(true);
+        setTimeout(() => {
+          setrequestedkey(false);
+          /* setsecretkey(
               `${Array(secretkey.length - 4)
                 .fill("*")
                 .join("")}${secretkey.slice(
@@ -101,11 +81,11 @@ function Myaddons() {
                 secretkey.length
               )}`
             ); */
-          }, 30000);
-        } else {
-          openpopup("Something Went Wrong", false);
-        }
-      });
+        }, 30000);
+      } else {
+        openpopup("Something Went Wrong", false);
+      }
+    });
   }
 
   function copyToClipboard(text: string) {
@@ -244,26 +224,36 @@ function Myaddons() {
             </div>
           ) : (
             <div className="mt-5">
-              {ext.map((item, index) => {
-                return (
-                  <SingleAddon
-                    key={index}
-                    item={item}
-                    cancelsub={() =>
-                      setcancelprop({
-                        iscancel: true,
-                        identifier: item.identifier,
-                        name: item.name,
-                      })
-                    }
-                    setrequestkeypopup={() => setrequestkeypopup(true)}
-                    setactiveextension={setactiveextension}
-                    setactiveextensionid={setactiveextensionid}
-                    setkeyschecker={() => setkeyschecker(false)}
-                    setsecretkey={setsecretkey}
-                  />
-                );
-              })}
+              {!ext[0]?.icon && (
+                <label
+                  htmlFor=""
+                  className="opacity-55 bg-zinc-800 py-4 px-3 rounded"
+                >
+                  You Don&apos;t Have Any Extension Addons Activated. Go To
+                  Extensions Tab, Select Your Extension & Click On Add Free
+                </label>
+              )}
+              {ext[0]?.icon &&
+                ext.map((item, index) => {
+                  return (
+                    <SingleAddon
+                      key={index}
+                      item={item}
+                      cancelsub={() =>
+                        setcancelprop({
+                          iscancel: true,
+                          identifier: item.identifier,
+                          name: item.name,
+                        })
+                      }
+                      setrequestkeypopup={() => setrequestkeypopup(true)}
+                      setactiveextension={setactiveextension}
+                      setactiveextensionid={setactiveextensionid}
+                      setkeyschecker={() => setkeyschecker(false)}
+                      setsecretkey={setsecretkey}
+                    />
+                  );
+                })}
             </div>
           )}
         </div>

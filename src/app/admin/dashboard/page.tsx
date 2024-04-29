@@ -1,7 +1,7 @@
 "use client";
 import AdminAction from "@/components/AdminDashboard/action";
 import AdminOverView from "@/components/AdminDashboard/overview";
-import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
+import fetchGet from "@/modules/fetchGet";
 import Config from "@/resources/config";
 import { BoundingBox, Cursor } from "@phosphor-icons/react/dist/ssr";
 import { deleteCookie, getCookie } from "cookies-next";
@@ -11,22 +11,14 @@ function DashboardAdmin() {
   const [option, setoption] = useState(0);
 
   function logout() {
-    const token = getCookie("syn_admin");
-    fetch(`${Config().api}/admin/logout`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          deleteCookie("syn_admin");
-          window.location.reload();
-        } else {
-        }
-      });
+    fetchGet("admin/logout", true).then((data) => {
+      if (data.status) {
+        deleteCookie("SYNU");
+        localStorage.clear();
+        window.location.reload();
+      } else {
+      }
+    });
   }
   return (
     <div className="w-full h-screen flex flex-row justify-center items-center gap-2">
@@ -66,4 +58,4 @@ function DashboardAdmin() {
   );
 }
 
-export default isAuth(DashboardAdmin);
+export default DashboardAdmin;

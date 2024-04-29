@@ -20,18 +20,14 @@ function HomeBanner() {
       <div className="absolute min-h-96 flex flex-col justify-center items-center rounded py-20 z-[3]">
         <motion.label
           initial={{
-            y: 50,
-            scale: 3,
-            opacity: 1,
-            filter: "brightness(3) contrast(2)",
+            y: -10,
+            opacity: 0,
           }}
           animate={{
             y: 0,
-            scale: 1,
             opacity: 1,
-            filter: "brightness(1) contrast(1)",
           }}
-          transition={{ duration: 1, delay: 0.1, ease: "backInOut" }}
+          transition={{ duration: 0.4, delay: 0.1, ease: "backInOut" }}
           htmlFor=""
         >
           <SyntaximosLogo
@@ -42,18 +38,18 @@ function HomeBanner() {
         </motion.label>
         <motion.h1
           className="transition-all text-center text-[25px] w-[500px] sm:w-[600px] md:text-[35px] md:w-[800px] lg:w-[960px] lg:text-[40px] mt-0 pt-3"
-          initial={{ y: 300, opacity: 0 }}
+          initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.1, ease: "backInOut" }}
+          transition={{ duration: 0.4, delay: 0.1, ease: "backInOut" }}
         >
           Supercharge Your Browser Experience with It&apos;s Amazing Extension
           Collection
         </motion.h1>
         <motion.h4
           className="transition-all text-base max-w-[400px] sm:max-w-[700px] md:max-w-full md:text-lg lg:text-xl font-medium p-0 m-0 text-center "
-          initial={{ y: 300, opacity: 0 }}
+          initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2, ease: "backInOut" }}
+          transition={{ duration: 0.4, delay: 0.2, ease: "backInOut" }}
         >
           Surf the Web Smarter, Not Harder: Syntaximos Has Your Back!
         </motion.h4>

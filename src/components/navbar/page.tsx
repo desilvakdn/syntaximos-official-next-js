@@ -1,13 +1,23 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import BecomeMember from "./becomemember";
-import AuthContext from "../SingleWrappers/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
 import SyntaximosLogo from "@/Icons/syntaximoswordlogo";
 import { List } from "@phosphor-icons/react/dist/ssr";
+import VerifyLogin from "@/utils/verifylogin";
+
+type DecodedJWT = {
+  firstname: string;
+  lastname: string;
+  id: string;
+  iat: number;
+  exp: number;
+  // ... other properties
+};
 
 function NavBar() {
+  const [session, setsession] = useState<DecodedJWT | null>(null);
   const { push } = useRouter();
   let menuitems = [
     { label: "Home", route: "/" },
@@ -15,20 +25,21 @@ function NavBar() {
     { label: "Pricing", route: "/extensions/pricing" },
     { label: "Contact", route: "/contact" },
   ];
-  const [active, setActive] = React.useState(0);
   const [ismenuactive, setismenuactive] = useState(false);
 
-  const { isloggedin, userid, isloading } = useContext(AuthContext);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const session = VerifyLogin();
+    setsession(session as DecodedJWT | null);
+  }, []);
 
   return (
     <>
       {!(
-        isloggedin &&
-        userid &&
-        !isloading &&
-        (pathname.includes("/member/dashboard") ||
-          pathname.includes("/admin/dashboard"))
+        session &&
+        (pathname?.includes("/member/dashboard") ||
+          pathname?.includes("/admin/dashboard"))
       ) && (
         <div className="transition-all flex flex-col gap-6 mb-3 justify-between items-center md:flex-row md:gap-0 md:mb-4 px-[20px] py-[20px] md:px-[1.3rem] md:py-[1.3rem]">
           <div className="w-full md:w-fit flex flex-row justify-between">
@@ -71,7 +82,7 @@ function NavBar() {
             })}
           </ul>
           <div className="hidden md:block">
-            <BecomeMember />
+            <BecomeMember session={session} />
           </div>
 
           {ismenuactive && (
@@ -94,7 +105,7 @@ function NavBar() {
                   );
                 })}
               </ul>
-              <BecomeMember />
+              <BecomeMember session={session} />
             </>
           )}
         </div>

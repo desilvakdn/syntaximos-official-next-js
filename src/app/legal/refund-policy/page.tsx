@@ -1,4 +1,11 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Refund Policy",
+  description:
+    "Syntaximos strives to provide high-quality Chrome extensions that enhance your browsing experience. We offer a transparent refund policy to ensure your satisfaction. Please visit full refund policy to understand your eligibility and the process for requesting a refund.",
+};
 
 function RefundPolicy() {
   function GetDateStyle1() {

@@ -1,6 +1,5 @@
 "use client";
 import PageLoader from "@/components/Loader/page";
-import isAuth from "@/components/SingleWrappers/AuthWrapperProtected";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -17,4 +16,4 @@ function Dashboard() {
   return <PageLoader />;
 }
 
-export default isAuth(Dashboard);
+export default Dashboard;

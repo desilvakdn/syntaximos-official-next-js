@@ -1,5 +1,6 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
+import fetchPost from "@/modules/fetchPost";
 import Config from "@/resources/config";
 import { CheckCircle, XCircle } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
@@ -28,26 +29,22 @@ function AccountVerification({
     if (!user_id || !token_) {
       push("/member/register");
     } else {
-      fetch(`${Config().api}/auth/validate/email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      fetchPost(
+        `auth/validate/email`,
+        {
           userid: user_id,
           code: token_,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status) {
-            setvalid(true);
-          } else {
-            push("/member/register");
-          }
+        },
+        true
+      ).then((data) => {
+        if (data.status) {
+          setvalid(true);
+        } else {
+          push("/member/register");
+        }
 
-          setischecking(false);
-        });
+        setischecking(false);
+      });
     }
   }, [push, token_, user_id]);
 
@@ -58,33 +55,29 @@ function AccountVerification({
 
     setverifying(true);
 
-    fetch(`${Config().api}/auth/verifytoken/email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `auth/verifytoken/email`,
+      {
         userid: user_id,
         code: code,
         token: token_,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          setsuccess("valid");
-          setTimeout(() => {
-            push("/member/login");
-          }, 3000);
-        } else {
-          setsuccess("invalid");
-          setTimeout(() => {
-            setsuccess("");
-          }, 3000);
-        }
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        setsuccess("valid");
+        setTimeout(() => {
+          push("/member/login");
+        }, 3000);
+      } else {
+        setsuccess("invalid");
+        setTimeout(() => {
+          setsuccess("");
+        }, 3000);
+      }
 
-        setverifying(false);
-      });
+      setverifying(false);
+    });
   }
 
   function handleresend() {
@@ -93,29 +86,25 @@ function AccountVerification({
     }
     setresending(true);
 
-    fetch(`${Config().api}/auth/resendcode/email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `auth/resendcode/email`,
+      {
         userid: user_id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status) {
-          setresending(false);
-          setresendtext("Sent");
-          setbtnlockresend(true);
-          setTimeout(() => {
-            setbtnlockresend(false);
-          }, 20000);
-          setTimeout(() => {
-            setresendtext("Resend");
-          }, 3000);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      if (data.status) {
+        setresending(false);
+        setresendtext("Sent");
+        setbtnlockresend(true);
+        setTimeout(() => {
+          setbtnlockresend(false);
+        }, 20000);
+        setTimeout(() => {
+          setresendtext("Resend");
+        }, 3000);
+      }
+    });
   }
 
   return (

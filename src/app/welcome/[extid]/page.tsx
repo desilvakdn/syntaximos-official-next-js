@@ -1,6 +1,7 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import PricingSection from "@/components/Pricing/pricingcompo";
+import fetchGet from "@/modules/fetchGet";
 import Config from "@/resources/config";
 import { GoogleChromeLogo, X } from "@phosphor-icons/react/dist/ssr";
 import React, { useEffect, useState } from "react";
@@ -15,23 +16,21 @@ function WelcomeExtId({ params }: { params: { extid: String } }) {
   });
 
   useEffect(() => {
-    fetch(`${Config().api}/web/extensions/${params.extid}`)
-      .then((e) => e.json())
-      .then((data: any) => {
-        if (data.status) {
-          setisinit(false);
-          setisvalidext(true);
-          setextname(data.extension);
-          setextdetails({
-            ...extdetails,
-            youtubeurl: data.data.setupurl,
-            reviewurl: data.data.reviewurl,
-          });
-        } else {
-          setisinit(false);
-          setisvalidext(false);
-        }
-      });
+    fetchGet(`web/extensions/${params.extid}`, true).then((data: any) => {
+      if (data.status) {
+        setisinit(false);
+        setisvalidext(true);
+        setextname(data.extension);
+        setextdetails({
+          ...extdetails,
+          youtubeurl: data.data.setupurl,
+          reviewurl: data.data.reviewurl,
+        });
+      } else {
+        setisinit(false);
+        setisvalidext(false);
+      }
+    });
   }, []);
   return (
     <div className="bg-zinc-900 flex-grow mb-3 flex flex-col items-center justify-center min-h-[600px] overflow-hidden">

@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import Config from "@/resources/config";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import { setCookie } from "cookies-next";
+import fetchGet from "@/modules/fetchGet";
+import fetchPost from "@/modules/fetchPost";
 
 function VerifyMe({ params }: { params: { token: string } }) {
   const [inputvalue, setinputvalue] = useState("");
@@ -18,18 +20,16 @@ function VerifyMe({ params }: { params: { token: string } }) {
 
   const { openpopup } = useGlobalPopup();
   useEffect(() => {
-    fetch(`${Config().api}/web/extensions/${params.token}`)
-      .then((e) => e.json())
-      .then((data) => {
-        if (data.status) {
-          setisinit(false);
-          setisvalidext(true);
-          setextname(data.extension);
-        } else {
-          setisinit(false);
-          setisvalidext(false);
-        }
-      });
+    fetchGet(`web/extensions/${params.token}`, true).then((data) => {
+      if (data.status) {
+        setisinit(false);
+        setisvalidext(true);
+        setextname(data.extension);
+      } else {
+        setisinit(false);
+        setisvalidext(false);
+      }
+    });
   }, []);
 
   function submitkey() {
@@ -39,27 +39,23 @@ function VerifyMe({ params }: { params: { token: string } }) {
 
     setisverifying(true);
 
-    fetch(`${Config().api}/dashboard/extension/verifykey`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    fetchPost(
+      `dashboard/extension/verifykey`,
+      {
         key: inputvalue,
         extid: params.token,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setisverifying(false);
-        if (data.status) {
-          setCookie(`syn_${data.eid}_uid`, data.publickey);
-          setverified(true);
-        } else {
-          openpopup("Invalid Key Provided. Please Check And Try Again", false);
-          setverified(false);
-        }
-      });
+      },
+      true
+    ).then((data) => {
+      setisverifying(false);
+      if (data.status) {
+        setCookie(`syn_${data.eid}_uid`, data.publickey);
+        setverified(true);
+      } else {
+        openpopup("Invalid Key Provided. Please Check And Try Again", false);
+        setverified(false);
+      }
+    });
   }
 
   return (

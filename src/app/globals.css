@@ -212,3 +212,7 @@ input {
     rgba(24, 24, 27, 0) 66%
   );
 }
+
+.grecaptcha-badge {
+  display: none !important;
+}

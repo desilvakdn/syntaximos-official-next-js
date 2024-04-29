@@ -1,4 +1,11 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description:
+    "Welcome to Syntaximos! By accessing and using our website and Chrome extensions, you agree to comply with the following Terms of Use. This policy outlines the rules and guidelines governing your interaction with our services. Please review the details below to ensure a positive and secure experience.",
+};
 
 function TermsofUse() {
   function GetDateStyle1() {

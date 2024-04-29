@@ -1,4 +1,11 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "Syntaximos is committed to protecting your privacy and ensuring a secure online experience. Our Privacy Policy outlines how we collect, use, and safeguard your personal data when you visit our website or use our Chrome extensions. We prioritize transparency and user control, providing clear information on data practices and your rights.",
+};
 
 function PrivacyPolicy() {
   function GetDateStyle1() {

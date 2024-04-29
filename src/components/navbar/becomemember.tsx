@@ -1,16 +1,20 @@
 "use client";
 import Link from "next/link";
-import React, { useContext } from "react";
-import AuthContext from "../SingleWrappers/AuthProvider";
+import React from "react";
 
-function BecomeMember() {
-  const { isloggedin, userid } = useContext(AuthContext);
-
+function BecomeMember({ session }: { session: any }) {
   return (
     <>
-      <Link href={isloggedin ? "/member/dashboard" : "/member"}>
-        <button>{isloggedin ? "Dashboard" : "Become a Member"}</button>
-      </Link>
+      {session && (
+        <Link href={"/member/dashboard"}>
+          <button>{"Dashboard"}</button>
+        </Link>
+      )}
+      {!session && (
+        <Link href={"/member"}>
+          <button>{"Become a Member"}</button>
+        </Link>
+      )}
     </>
   );
 }
