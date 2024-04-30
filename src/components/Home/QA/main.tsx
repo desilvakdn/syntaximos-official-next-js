@@ -12,13 +12,15 @@ async function QA() {
   const qacontainer: QADetails = await qaholder.json();
 
   return (
-    <div className="pb-14 align-mddle text-center flex flex-col justify-center items-center">
+    <div className="pb-[100px] align-mddle text-center flex flex-col justify-center items-center">
       <h2 className="text-center">Answers to Your Burning Questions</h2>
       <p className="text-center opacity-50 w-[450px] md:w-[650px]">
         The following are the questions users were asked, you may have too.
         Contact us for more clarification.
       </p>
-      <QAcontainer qacontainer={qacontainer} />
+      <div className="w-[95%]">
+        <QAcontainer qacontainer={qacontainer} />
+      </div>
     </div>
   );
 }

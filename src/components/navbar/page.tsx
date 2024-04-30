@@ -87,7 +87,7 @@ function NavBar() {
 
           {ismenuactive && (
             <>
-              <ul className="flex flex-row justify-center items-center gap-3">
+              <ul className="flex md:hidden flex-row justify-center items-center gap-3">
                 {menuitems.map((item, index) => {
                   return (
                     <Link key={item.label.toLowerCase()} href={item.route}>
@@ -105,7 +105,9 @@ function NavBar() {
                   );
                 })}
               </ul>
-              <BecomeMember session={session} />
+              <div className="block md:hidden">
+                <BecomeMember session={session} />
+              </div>
             </>
           )}
         </div>

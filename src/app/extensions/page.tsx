@@ -3,7 +3,6 @@ import Config from "@/resources/config";
 import React from "react";
 
 import type { Metadata } from "next";
-import fetchGet from "@/modules/fetchGet";
 
 export const metadata: Metadata = {
   title: "Browser Extensions",

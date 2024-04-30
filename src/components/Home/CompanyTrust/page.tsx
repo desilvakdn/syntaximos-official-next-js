@@ -28,7 +28,7 @@ export default function TrustedBy() {
   }, []);
   return (
     <>
-      <div className="my-10">
+      <div className="my-[100px]">
         <LazyMotion features={domAnimation}>
           <m.div
             initial={{ y: -10, opacity: 0 }}

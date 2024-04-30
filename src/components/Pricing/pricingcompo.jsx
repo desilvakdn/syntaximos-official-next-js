@@ -99,7 +99,7 @@ function PricingSection({ extid }) {
           </div>
         </>
       ) : (
-        <div className="flex flex-col gap-2 items-center justify-center bg-zinc-900 rounded mb-10  pb-20">
+        <div className=" flex flex-col gap-2 items-center justify-center bg-zinc-900 rounded mb-10  pb-20">
           <div className="text-center">
             <h3>{data.metadata[0]}</h3>
             <h1 className="text-synblue">{data.metadata[1]}</h1>

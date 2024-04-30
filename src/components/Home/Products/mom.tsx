@@ -14,19 +14,23 @@ async function ProductShowcase() {
 
   const extdetailsdata: ExtDetailsResponse = await extdetails.json();
   return (
-    <div className="pb-14 align-mddle text-center flex flex-col justify-center items-center">
+    <div className="my-[100px] pb-14 align-mddle text-center flex flex-col justify-center items-center">
       <h2 className="text-center ">Exclusive Extension Collection</h2>
       <p className="text-center opacity-50 w-[450px] md:w-[650px]">
         Here&apos;s Our most capable extension collection. First you have to be
         a member and then you can add and use without pain.
       </p>
       <ViewAllCompo />
-      <div className="m-10 grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-3">
-        <div></div>
+      <div
+        className={`m-10 grid grid-cols-1 ${
+          extdetailsdata.data.length > 1 && "md:grid-cols-2"
+        }  lg:grid-cols-3 gap-3`}
+      >
+        {extdetailsdata.data.length === 1 && <div></div>}
         {extdetailsdata.data.map((item, index) => (
           <Products key={index} data={item} />
         ))}
-        <div></div>
+        {extdetailsdata.data.length === 1 && <div></div>}
         {/* {mainfeatures.map((feature, index) => {
       return (
         <div className="transition-all cursor-pointer py-4 px-6 flex flex-col justify-center items-center max-w-96 bg-synwhite text-synblack rounded hover:bg-synblue hover:text-synwhite">

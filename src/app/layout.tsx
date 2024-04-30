@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import NavBar from "@/components/navbar/page";
@@ -8,7 +8,7 @@ import GoogleRecaptchaWrapper from "@/components/SingleWrappers/GoogleRecaptchaW
 import { GlobalPopupProvider } from "@/components/SingleWrappers/MessageWrapper";
 import GPop from "@/components/popups/globalpopup";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 const Approach = localFont({
   src: [
@@ -96,7 +96,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={Approach.className}>
+      <body className={montserrat.className}>
         <GlobalPopupProvider>
           <GPop />
           <GoogleRecaptchaWrapper>

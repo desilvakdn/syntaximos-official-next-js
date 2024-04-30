@@ -9,6 +9,11 @@
   --syngold: #ecbe1c;
 }
 
+html {
+  --scroll-behavior: smooth !important;
+  scroll-behavior: smooth !important;
+}
+
 body {
   background-color: #101010;
   color: #ffffff;

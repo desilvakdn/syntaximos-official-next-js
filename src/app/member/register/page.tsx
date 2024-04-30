@@ -153,7 +153,7 @@ function Register() {
           close={() => setproperties({ popup: false, header: "", body: "" })}
         />
       )}
-      <div className="flex-grow flex justify-center items-center flex-col min-h-[300px] md:min-h-[600px]">
+      <div className="pt-[20px] pb-[100px] flex-grow flex justify-center items-center flex-col min-h-[300px] md:min-h-[600px]">
         <h2>Become A Syntaximos</h2>
         <p className="px-[15px] text-center">
           Fill the following form with correct details to become a syntaximos

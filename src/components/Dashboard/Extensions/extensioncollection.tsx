@@ -9,7 +9,7 @@ function ExtensionCollection({
   extdetailsdata: { data: any[] };
 }) {
   return (
-    <div className="bg-zinc-900 flex-grow mb-3 flex flex-col items-center overflow-hidden">
+    <div className="bg-zinc-900 flex-grow mb-3 min-h-screen flex flex-col items-center overflow-hidden">
       <div className="mt-[100px] text-center">
         <motion.h1
           initial={{ y: 300, opacity: 0 }}

@@ -29,7 +29,7 @@ function Steps({ steps }: { steps: Steps[] }) {
   }, []);
 
   return (
-    <div className="py-14 align-mddle text-center flex flex-col justify-center items-center">
+    <div className="py-[100px] align-mddle text-center flex flex-col justify-center items-center">
       <h2 className="text-center"> How It Works Like a Charm</h2>
       <p className="text-center opacity-50 w-[400px] md:w-[600px]">
         We Don&apos;t Make Things Complex For Users. We Handle All, So
@@ -58,9 +58,9 @@ function Steps({ steps }: { steps: Steps[] }) {
         }}
       >
         <div
-          className={`${
+          className={`relative ${
             SlideInUp ? "SlideIn" : ""
-          } min-w-[${imagewidth}px] min-h-[${imageheight}px] bg-zinc-800 rounded border-solid border-2 border-synwhite flex justify-center items-center`}
+          } w-full min-h-[${imageheight}px] bg-zinc-800 rounded border-solid border-2 border-synwhite flex justify-center items-center`}
         >
           <Image
             src={steps[currentActiveStep - 1].image}

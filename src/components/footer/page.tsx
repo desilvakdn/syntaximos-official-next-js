@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import SyntaximosLogo from "@/Icons/syntaximoswordlogo";
 import fetchGet from "@/modules/fetchGet";
+import Divider from "../Home/divider";
 
 interface ExtDetailsResponse {
   status: boolean;
@@ -69,7 +70,10 @@ function Footer() {
         pathname?.includes("/member/dashboard") ||
         pathname?.includes("/admin/dashboard")
       ) && (
-        <div className="mt-auto bg-zinc-900 min-h-72 rounded flex flex-col justify-between">
+        <div className="mt-auto relative bg-zinc-900 min-h-72 rounded flex flex-col items-center justify-between">
+          <div className="absolute top-0 w-[60%] items-center justify-center flex">
+            <Divider />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-8">
             <div className="flex flex-col justify-center items-center text-center md:justify-start md:items-start md:text-left">
               <div className="flex flex-row gap-1 items-center mb-2">
