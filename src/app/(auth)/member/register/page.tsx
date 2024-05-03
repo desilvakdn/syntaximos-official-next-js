@@ -298,10 +298,10 @@ function Register() {
             )}
           </button>
         </div>
-        {/*  <label htmlFor="" className="py-3">
+        <label htmlFor="" className="py-3">
           Or
         </label>
-        <SocialAuth signup={true} signin={false} /> */}
+        <SocialAuth signup={true} signin={false} />
       </div>
     </>
   );

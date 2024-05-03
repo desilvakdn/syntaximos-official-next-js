@@ -1,6 +1,7 @@
 "use client";
 import LoadingDots from "@/components/Animations/LoadingDots/page";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import PopUpWrapper from "@/components/SingleWrappers/PopUpWrapper";
 import ConfirmBasic from "@/components/popups/ConfirmBasic/page";
 import PopUpBasic from "@/components/popups/PopUpBasic/page";
 import fetchGet from "@/modules/fetchGet";
@@ -13,6 +14,7 @@ import {
   Fan,
   Key,
   Trash,
+  X,
   YoutubeLogo,
 } from "@phosphor-icons/react/dist/ssr";
 import { getCookie } from "cookies-next";
@@ -54,6 +56,9 @@ function SingleAddon({
   const [iscancelatend, setIscancelatend] = useState(false);
   const [confirmedupdate, setconfirmedupdate] = useState(false);
   const [isupdating, setisupdating] = useState(false);
+  const [morecancelinfo, setmorecancelinfo] = useState(false);
+  const [isremovingcancellation, setisremovingcancellation] = useState(false);
+  const [iscancelnow, setiscancelnow] = useState(false);
 
   const [iscancellingpremium, setIscancellingpremium] = useState(false);
 
@@ -166,8 +171,111 @@ function SingleAddon({
     });
   }
 
+  function removesubcancellation() {
+    if (isremovingcancellation || iscancelnow) return;
+
+    setisremovingcancellation(true);
+
+    fetchPost(
+      "stripe/removecancellation",
+      {
+        subid: item.subid,
+      },
+      true
+    ).then((response) => {
+      if (response.status) {
+        openpopup(response.response, true);
+        setmorecancelinfo(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1300);
+      } else {
+        openpopup(response.response, false);
+      }
+      setisremovingcancellation(false);
+    });
+  }
+
+  function cancelnow() {
+    if (isremovingcancellation || iscancelnow) return;
+
+    setiscancelnow(true);
+
+    fetchPost(
+      "stripe/cancelnow",
+      {
+        subid: item.subid,
+      },
+      true
+    ).then((response) => {
+      if (response.status) {
+        openpopup(response.response, true);
+        setmorecancelinfo(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1300);
+      } else {
+        openpopup(response.response, false);
+      }
+      setiscancelnow(false);
+    });
+  }
+
   return (
     <>
+      {morecancelinfo && (
+        <PopUpWrapper>
+          <div className="bg-white min-w-[500px] max-w-[520px] min-h-[300px] rounded relative text-synblack p-5">
+            <span
+              onClick={() => setmorecancelinfo(false)}
+              className="absolute right-5 opacity-60 hover:opacity-100 transition-all cursor-pointer"
+            >
+              <X size={26} weight="bold" />
+            </span>
+            <h2>Cancelling Subscription</h2>
+            <label htmlFor="">
+              Your subscription will be automatically canceled at the end of
+              your billing period. Until then, you can use Premium features
+              without any issues. You can still renew your subscription and get
+              a seamless working experience, or you can cancel it immediately,
+              which means you won&apos;t be able to use premium features. This
+              action cannot be revised.
+            </label>
+            <div className="flex w-full flex-row gap-1 items-center py-3">
+              <button
+                onClick={removesubcancellation}
+                className="bg-lime-600 hover:bg-lime-700 hover:text-white w-full flex flex-row gap-1 items-center justify-center"
+              >
+                {isremovingcancellation ? (
+                  <>
+                    <span>Processing</span>
+                    <span>
+                      <LoadingDots width={20} fill="black" />
+                    </span>
+                  </>
+                ) : (
+                  <span>Remove Cancellation</span>
+                )}
+              </button>
+              <button
+                onClick={cancelnow}
+                className="bg-red-600 hover:bg-red-700 hover:text-white w-full flex flex-row gap-1 items-center justify-center"
+              >
+                {iscancelnow ? (
+                  <>
+                    <span>Processing</span>
+                    <span>
+                      <LoadingDots width={20} fill="black" />
+                    </span>
+                  </>
+                ) : (
+                  <span>Cancel Immediately</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </PopUpWrapper>
+      )}
       {props.popupprops.ispopup && (
         <PopUpBasic
           header={props.popupprops.header}
@@ -244,10 +352,11 @@ function SingleAddon({
         )}
         {iscancelatend && (
           <label
+            onClick={() => setmorecancelinfo(true)}
             htmlFor=""
-            className="absolute top-[-10px] left-1/2 translate-x-[-50%] translate-y-0 text-[12px] bg-red-600 text-synwhite py-[3px] px-5 rounded hover:bg-red-500 transition-all cursor-pointer"
+            className="w-[65%] absolute top-[-10px] left-1/2 translate-x-[-50%] translate-y-0 text-[12px] bg-red-600 text-synwhite py-[3px] px-5 rounded hover:bg-red-500 transition-all cursor-pointer"
           >
-            Pending Cancel
+            Pending Cancel | Click Here For More Info
           </label>
         )}
         <label

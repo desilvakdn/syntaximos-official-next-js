@@ -86,6 +86,9 @@ function SinglePaymentCard({ data }: { data: SinglePaymentCardProps }) {
       setprops({ ...props, isremovingcard: false });
       if (data.status) {
         openpopup("Card Removed Successfully", true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         openpopup("Failed to Remove Card", false);
       }

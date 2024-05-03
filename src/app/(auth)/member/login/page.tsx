@@ -295,10 +295,10 @@ function Login() {
               </button>
             </div>
           </div>
-          {/* <label htmlFor="" className="py-3">
+          <label htmlFor="" className="py-3">
             Or
           </label>
-          <SocialAuth signup={false} signin={true} /> */}
+          <SocialAuth signup={false} signin={true} />
         </div>
       )}
     </>

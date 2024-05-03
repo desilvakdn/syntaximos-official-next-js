@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   BoundingBox,
   Check,
+  Confetti,
   CurrencyCircleDollar,
   Envelope,
   EnvelopeSimple,
@@ -24,6 +25,7 @@ import React, { useEffect, useState } from "react";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
 import fetchGet from "@/modules/fetchGet";
 import fetchPost from "@/modules/fetchPost";
+import MyOffers from "@/components/Dashboard/My Offers/myOffers";
 
 function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const { push } = useRouter();
@@ -51,6 +53,12 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       identifier: "billing",
     },
     {
+      name: "My Offers",
+      icon: <Confetti size={24} weight="bold" />,
+      url: "/member/dashboard/myoffers",
+      identifier: "myoffers",
+    },
+    {
       name: "Setting",
       icon: <Gear size={24} weight="bold" />,
       url: "/member/dashboard/setting",
@@ -73,6 +81,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     extensions: "Extensions",
     myaddons: "My Addons",
     billing: "Billing",
+    myoffers: "My Offers",
     setting: "Setting",
   };
 
@@ -445,12 +454,13 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               )}
             </motion.div>
           )}
-          <div className="w-full h-full flex-grow-1 bg-zinc-900  rounded flex flex-col gap-3">
+          <div className="w-full h-full flex-grow-1 bg-zinc-900  rounded flex flex-col gap-3 overflow-auto">
             {
               {
                 extensions: <ExtensionsDashboard />,
                 myaddons: <Myaddons />,
                 billing: <Billing />,
+                myoffers: <MyOffers />,
                 setting: <Setting />,
               }[params.dashpath as keyof typeof navlabel]
             }
