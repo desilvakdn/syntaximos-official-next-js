@@ -10,6 +10,7 @@ import Config from "@/resources/config";
 import fetchGet from "@/modules/fetchGet";
 import fetchPost from "@/modules/fetchPost";
 import VerifyLogin from "@/utils/verifylogin";
+import { motion } from "framer-motion";
 
 function PricingSection({ extid }) {
   const [session, setsession] = useState(null);
@@ -48,14 +49,15 @@ function PricingSection({ extid }) {
     });
   }, [extid]);
 
-  function purchase(identifier) {
+  async function purchase(identifier) {
     if (isloading) return;
 
     if (!session) {
       openpopup("You need to login to subscribe", false);
-      setTimeout(() => {
-        push("/member/login");
-      }, 1500);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      push("/member/login");
+
+      return;
     }
 
     setselected(identifier);
@@ -99,7 +101,7 @@ function PricingSection({ extid }) {
           </div>
         </>
       ) : (
-        <div className=" flex flex-col gap-2 items-center justify-center bg-zinc-900 rounded mb-10  pb-20">
+        <div className="w-full flex flex-col gap-2 items-center justify-center bg-zinc-900 rounded mb-10  pb-20">
           <div className="text-center">
             <h3>{data.metadata[0]}</h3>
             <h1 className="text-synblue">{data.metadata[1]}</h1>
@@ -128,12 +130,19 @@ function PricingSection({ extid }) {
               );
             })}
           </div>
-          <div className="mt-10 flex flex-row gap-2 flex-wrap justify-center items-start">
+          <div className="flex flex-row gap-3 flex-wrap mt-10">
             {data.packages.map((item, index) => {
               return (
-                <div
+                <motion.div
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 0.2 * index,
+                    ease: "backInOut",
+                  }}
                   key={index}
-                  className={`w-[460px] border-2 border-solid relative flex-grow h-[100%] flex flex-col ${
+                  className={`w-[460px] border-2 border-solid relative flex-grow flex flex-col ${
                     item.popular
                       ? "border-synblue bg-blue-800"
                       : "border-zinc-600"
@@ -214,9 +223,62 @@ function PricingSection({ extid }) {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
+
+            <motion.div
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                duration: 0.7,
+                delay: 0.2 * data.packages.length,
+                ease: "backInOut",
+              }}
+              className="flex flex-row gap-2 flex-wrap justify-center items-start"
+            >
+              <div
+                className={`w-[460px] border-2 border-solid relative flex-grow h-[100%] flex flex-col border-zinc-600  rounded p-4`}
+              >
+                <h2 className="m-0 p-0">For Teams</h2>
+                <h4 className="m-0 p-0 font-normal mb-4">
+                  For teams who want to succeed together
+                </h4>
+                <h4 className="m-0 p-0 font-normal mb-4 opacity-50">
+                  For inquiries to get access to our team subscription, contact
+                  sales team. Our team subscription requires a minimum of five
+                  members for enrollment.
+                </h4>
+                {/* <label htmlFor="" className="block">
+                <span>$ </span>
+                <span className="text-5xl ">
+                  {item.pricing[pgperiod].value.toFixed(2)}
+                </span>
+              </label>
+              <h4 className="mt-4">{item.additional}</h4> */}
+                <button
+                  onClick={() => push(`/sales/${extid}`)}
+                  className="w-full mt-4 h-[60px] mb-9 hover:scale-[1.02] flex flex-row gap-2 items-center justify-center"
+                >
+                  Contact Sales
+                </button>
+                <label htmlFor="">Comes With All Features Unlocked</label>
+                <div className="flex flex-col mt-5 gap-3">
+                  <label htmlFor="" className={`flex flex-row gap-2 `}>
+                    <span>
+                      <CheckSquare size={22} weight="fill" />
+                    </span>
+                    <span>All Pro Features</span>
+                  </label>
+                  <label htmlFor="" className={`flex flex-row gap-2 `}>
+                    <span>
+                      <CheckSquare size={22} weight="fill" />
+                    </span>
+                    <span>Priority Support</span>
+                  </label>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       )}

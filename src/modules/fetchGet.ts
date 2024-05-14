@@ -11,23 +11,23 @@ async function fetchGet(path: string, secure: boolean) {
     credentials: secure ? "include" : undefined,
   })
     .then((e) => e.json())
-    .then((response) => {
+    .then(async (response) => {
+      console.log(response);
       if (response.expired) {
         localStorage.clear();
         deleteCookie("SYNU");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        window.location.reload();
+      } else {
+        return response;
       }
-
-      return response;
     })
-    .catch((err) => {
+    .catch(async (err) => {
+      console.log(err);
       localStorage.clear();
       deleteCookie("SYNU");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      window.location.reload();
     });
 }
 

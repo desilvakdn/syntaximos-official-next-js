@@ -1,5 +1,6 @@
 import CustomerFeedbackSection from "@/components/ExtensionPage/customertesto";
 import FeaturesSection from "@/components/ExtensionPage/features";
+import GrowthStats from "@/components/ExtensionPage/growthstats";
 import HeroExtensionSection from "@/components/ExtensionPage/herosection";
 import HowItWorks from "@/components/ExtensionPage/howitworks";
 import PricingSectionExtPage from "@/components/ExtensionPage/pricing";
@@ -84,12 +85,18 @@ async function ExtensionPage({
           <FeaturesSection
             extension={djson.data.title}
             features={djson.data.features}
+            headline={djson?.data?.feature_headline}
           />
+          {djson?.data?.growth_stats && (
+            <GrowthStats growth_stats={djson?.data?.growth_stats} />
+          )}
           <HowItWorks ytlink={djson.data.videos.howitworks} />
-          <CustomerFeedbackSection
-            extensionreviewurl={djson.data.link}
-            reviews={djson.data.reviews}
-          />
+          {djson?.data?.reviews && (
+            <CustomerFeedbackSection
+              extensionreviewurl={djson.data.link}
+              reviews={djson.data.reviews}
+            />
+          )}
           <PricingSectionExtPage extid={djson.data.identifier} />
           <QASection
             data={{

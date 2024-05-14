@@ -13,7 +13,7 @@ function CustomerFeedbackSection({
   }[];
 }) {
   return (
-    <div className="flex flex-col gap-2  w-full min-h-[30vw]">
+    <div className="flex flex-col gap-2  w-full min-h-[30vw] max-w-[1380px]">
       <h1 className="text-4xl">Here&apos;s What Our Members Say</h1>
       <label htmlFor="" className="text-justify">
         Our members are the most important part of our community. Here&apos;s

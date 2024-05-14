@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 
 const useTimer = ({
   startdate,
-  enddate,
   targettime,
 }: {
   startdate: string;
-  enddate: string;
   targettime: number;
 }) => {
   const [targetDate, setTargetDate] = useState(
@@ -45,7 +43,7 @@ const useTimer = ({
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [startdate, enddate, targetDate, targettime]);
+  }, [startdate, targetDate, targettime]);
 
   return { timeLeft, isTimeUp };
 };

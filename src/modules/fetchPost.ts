@@ -16,29 +16,21 @@ async function fetchPost(
     credentials: secure ? "include" : undefined,
   })
     .then((e) => e.json())
-    .then((response) => {
+    .then(async (response) => {
       if (response.expired) {
         localStorage.clear();
         deleteCookie("SYNU");
-        deleteCookie("SYNA");
-        deleteCookie("SYNR");
-        deleteCookie("SYNLOG");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        window.location.reload();
+      } else {
+        return response;
       }
-
-      return response;
     })
-    .catch((err) => {
+    .catch(async (err) => {
       localStorage.clear();
       deleteCookie("SYNU");
-      deleteCookie("SYNA");
-      deleteCookie("SYNR");
-      deleteCookie("SYNLOG");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      window.location.reload();
     });
 }
 

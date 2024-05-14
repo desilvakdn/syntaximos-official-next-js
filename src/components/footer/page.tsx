@@ -61,6 +61,16 @@ function Footer() {
       url: "/contact",
     },
   ];
+  let special = [
+    {
+      name: "Get Team Access",
+      url: "/sales",
+    },
+    {
+      name: "For Advertisements",
+      url: "/contact",
+    },
+  ];
 
   useEffect(() => {}, []);
 
@@ -74,13 +84,13 @@ function Footer() {
           <div className="absolute top-0 w-[60%] items-center justify-center flex">
             <Divider />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 p-8">
             <div className="flex flex-col justify-center items-center text-center md:justify-start md:items-start md:text-left">
               <div className="flex flex-row gap-1 items-center mb-2">
                 <SyntaximosLogo width={160} logocolor="#2d5bff" />
                 {/* <h2>Syntaximos</h2> */}
               </div>
-              <p className="lg:mr-36 opacity-50 pr-[25px] lg:pr-0 text-justify">
+              <p className="lg:mr-5 opacity-50 pr-[25px] lg:pr-0 text-justify">
                 Discover secure, time-saving Chrome extensions that automate
                 tasks, unlock web features, and supercharge productivity. Trust
                 in our commitment to safety and data protection. Try now and
@@ -117,6 +127,25 @@ function Footer() {
               <h3>Legal</h3>
               <ul className="flex flex-col justify-center items-center md:justify-start md:items-start">
                 {legal.map((item, index) => (
+                  <li
+                    key={index}
+                    className="opacity-50 hover:opacity-100 hover:text-synblue transition-all cursor-pointer"
+                  >
+                    <label
+                      htmlFor=""
+                      onClick={() => push(item.url)}
+                      className="cursor-pointer"
+                    >
+                      {item.name}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col md:items-start items-center ">
+              <h3>Special</h3>
+              <ul className="flex flex-col justify-center items-center md:justify-start md:items-start">
+                {special.map((item, index) => (
                   <li
                     key={index}
                     className="opacity-50 hover:opacity-100 hover:text-synblue transition-all cursor-pointer"

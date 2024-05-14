@@ -3,17 +3,19 @@ import LoadingDots from "@/components/Animations/LoadingDots/page";
 import useTimer from "@/components/Common/Timer";
 import Timer from "@/components/Common/Timer";
 import { useGlobalPopup } from "@/components/SingleWrappers/MessageWrapper";
+import { OfferCardTypes } from "@/types/OfferCard";
 import React, { useEffect, useState } from "react";
 
-function SingleOffer() {
+function SingleOffer({ offer }: { offer: OfferCardTypes }) {
   const { openpopup } = useGlobalPopup();
   const [offerexpired, setofferexpired] = useState(false);
   const [isredeeming, setisredeeming] = useState(false);
   const { timeLeft, isTimeUp } = useTimer({
     startdate: new Date().toString(),
-    enddate: "2024-05-04",
-    targettime: 100000,
+    targettime: 4,
   });
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     isTimeUp ? setofferexpired(true) : setofferexpired(false);
@@ -82,9 +84,9 @@ function SingleOffer() {
         <div className="flex flex-row gap-2 items-center">
           <div className="w-[97px] h-[97px] rounded-full bg-slate-200"></div>
           <div>
-            <h3 className="p-0 m-0">Fiverr Mate Pro</h3>
-            <label htmlFor="">Get Yearly Membership For</label>
-            <h1 className="p-0 m-0">50% Off</h1>
+            <h3 className="p-0 m-0">{offer.extensionid}</h3>
+            <label htmlFor="">{offer.offer.name}</label>
+            <h1 className="p-0 m-0">{offer.offer.amount}</h1>
           </div>
         </div>
         <div>
@@ -109,14 +111,7 @@ function SingleOffer() {
         </div>
       </div>
       <div className="mt-3">
-        <p className="text-justify opacity-60">
-          Special Offer Just Only for You! Don&apos;t Miss Out. Hurry Up Before
-          it&apos;s Gone. With Fiverr Mate, Boost Your Gig&apos;s SEO, Beat the
-          Competition and Rank 1st On Fiverr. Find Hidden Keywords and Stats to
-          Shine Among 1000+ and Lot&apos;s More Features. We Get You Want to
-          Rank Your Fiverr Gig, and Here&apos;s the Deal: Pay for Your
-          Subscription with Just One Fiverr Order. Grab This Opportunity Now!
-        </p>
+        <p className="text-justify opacity-60">{offer.offer.message}</p>
       </div>
     </div>
   );

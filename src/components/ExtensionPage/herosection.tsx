@@ -1,10 +1,17 @@
 "use client";
 import { BackgroundBeams } from "@/ui/BackgroundBeams";
-import { DownloadSimple, Star, StarHalf } from "@phosphor-icons/react/dist/ssr";
+import {
+  DownloadSimple,
+  Pause,
+  Star,
+  StarHalf,
+} from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import "./css/hero_section.css";
+import { Play } from "@phosphor-icons/react";
 
 interface Extension {
   rating: number;
@@ -17,15 +24,50 @@ interface Extension {
   link: string;
   heroimg: string;
   identifier: string;
+  videos: {
+    featured: string;
+  };
 }
 
 function HeroExtensionSection({ data }: { data: Extension }) {
   const { push } = useRouter();
   let rating = data.rating;
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [launchvideo, setlaunchvideo] = useState(false);
+  const [isplay, setisplay] = useState(true);
+  const [iswallvisible, setiswallvisible] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setlaunchvideo(true);
+    }, 1000);
+    return () => clearTimeout(t);
+  }, []);
+
+  function playvideo() {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setisplay(true);
+    }
+  }
+  function pausevideo() {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setisplay(false);
+    }
+  }
+
   return (
-    <div className="relative w-full  p-2">
-      <div className="relative z-[2] flex flex-col lg:flex-row gap-2 justify-between items-center w-full ">
-        <motion.div layout className="flex flex-col gap-1 flex-grow ">
+    <div className="relative w-full  p-2 py-12 pb-20 flex justify-center items-center overflow-hidden min-h-[700px]">
+      <motion.div
+        initial={{ left: -6000, opacity: 0 }}
+        animate={{ left: -1900, opacity: 1 }}
+        transition={{ duration: 2, ease: "backInOut" }}
+        className="bg-zinc-800 bg-opacity-30 w-[3000px] h-[3000px] absolute rounded-full"
+      ></motion.div>
+      <div className="relative z-[2] flex flex-col xl:flex-row gap-5 justify-between items-center w-full max-w-[1700px]">
+        <motion.div layout className="flex flex-col gap-1 flex-grow w-full">
           <motion.label
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -65,7 +107,7 @@ function HeroExtensionSection({ data }: { data: Extension }) {
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
-            className="max-w-[700px] opacity-55 text-justify"
+            className="max-w-[700px] opacity-55 text-justify pr-10"
           >
             {data.description}
           </motion.p>
@@ -162,7 +204,69 @@ function HeroExtensionSection({ data }: { data: Extension }) {
             </motion.button>
           </div>
         </motion.div>
-        <motion.div
+        {launchvideo && (
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: "backInOut" }}
+            className="hidden sm:flex pt-10 lg:pt-0 flex-grow w-full justify-center relative drop-shadow-md"
+          >
+            <div
+              onMouseOver={() => setiswallvisible(true)}
+              onMouseLeave={() => setiswallvisible(false)}
+              className="floating p-2 border-[2px] border-dashed border-zinc-500 rounded-md relative"
+            >
+              {iswallvisible && (
+                <AnimatePresence>
+                  <motion.div
+                    initial={{ y: -10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -10, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "backInOut" }}
+                    onClick={() => (isplay ? pausevideo() : playvideo())}
+                    className="absolute top-0 left-0 bottom-0 right-0 bg-zinc-900 bg-opacity-90 flex justify-center items-center hover:cursor-pointer z-[1]"
+                  >
+                    {!isplay && (
+                      <Play size={32} weight="bold" className="text-zinc-200" />
+                    )}
+                    {isplay && (
+                      <Pause
+                        size={32}
+                        weight="bold"
+                        className="text-zinc-200"
+                      />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              )}
+              <video
+                ref={videoRef}
+                className=" rounded-md"
+                width="100%"
+                height="200"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+              >
+                <source src={data.videos.featured} type="video/webm" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            {/* <CldVideoPlayer
+            src="/Extensions/fiverrmate/fiverr_mate_promo.mp4"
+            width={700}
+            height={200}
+            muted={true}
+            autoplay={true}
+            loop={true}
+            preload="auto"
+            controls={false}
+          /> */}
+          </motion.div>
+        )}
+        {/* <motion.div
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 0.5, ease: "backInOut" }}
@@ -177,7 +281,7 @@ function HeroExtensionSection({ data }: { data: Extension }) {
             quality={100}
             loading="lazy"
           />
-        </motion.div>
+        </motion.div> */}
       </div>
       <BackgroundBeams className="opacity-55" />
     </div>
