@@ -183,8 +183,13 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       const data = await fetchPost(`auth/logout`, {}, true);
 
       if (data?.status || data?.expired) {
-        deleteCookie("SYNU");
-        localStorage.clear();
+        deleteCookie("SYNU", {
+          path: "/",
+          domain: Config().api.includes("localhost")
+            ? "localhost"
+            : process.env.NEXT_PUBLIC_WEB_URL_COOKIE_DELETION,
+        });
+        //localStorage.clear();
         window.location.reload();
       } else {
         openpopup("Something Went Wrong", false);

@@ -12,10 +12,13 @@ async function fetchGet(path: string, secure: boolean) {
   })
     .then((e) => e.json())
     .then(async (response) => {
-      console.log(response);
       if (response.expired) {
-        localStorage.clear();
-        deleteCookie("SYNU");
+        deleteCookie("SYNU", {
+          path: "/",
+          domain: Config().api.includes("localhost")
+            ? "localhost"
+            : process.env.NEXT_PUBLIC_WEB_URL_COOKIE_DELETION,
+        });
         await new Promise((resolve) => setTimeout(resolve, 1000));
         window.location.reload();
       } else {
@@ -23,9 +26,12 @@ async function fetchGet(path: string, secure: boolean) {
       }
     })
     .catch(async (err) => {
-      console.log(err);
-      localStorage.clear();
-      deleteCookie("SYNU");
+      deleteCookie("SYNU", {
+        path: "/",
+        domain: Config().api.includes("localhost")
+          ? "localhost"
+          : process.env.NEXT_PUBLIC_WEB_URL_COOKIE_DELETION,
+      });
       await new Promise((resolve) => setTimeout(resolve, 1000));
       window.location.reload();
     });
