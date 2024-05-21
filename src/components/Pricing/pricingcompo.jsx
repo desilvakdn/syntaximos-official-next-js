@@ -11,6 +11,9 @@ import fetchGet from "@/modules/fetchGet";
 import fetchPost from "@/modules/fetchPost";
 import VerifyLogin from "@/utils/verifylogin";
 import { motion } from "framer-motion";
+import { IconRocket } from "@tabler/icons-react";
+import { twMerge } from "tailwind-merge";
+import Tooltip from "../SingleWrappers/Tooltip";
 
 function PricingSection({ extid }) {
   const [session, setsession] = useState(null);
@@ -107,7 +110,7 @@ function PricingSection({ extid }) {
             <h1 className="text-synblue">{data.metadata[1]}</h1>
             <label htmlFor="">{data.metadata[2]}</label>
           </div>
-          <div className="flex flex-row gap-2 justify-center items-center bg-neutral-100 text-synblack p-1 rounded mt-4 mx-2">
+          <div className="relative flex flex-row gap-2 justify-center items-center border-[2px] border-dashed border-zinc-700 drop-shadow-md text-synblack p-1 rounded mt-4 mx-2">
             {data.periods.map((item, index) => {
               return (
                 <label
@@ -115,13 +118,13 @@ function PricingSection({ extid }) {
                   htmlFor=""
                   className={`relative rounded  py-3 px-10 md:px-24 cursor-pointer font-bold hover:bg-synblue-600   transition-all duration-300 ease-in-out ${
                     pgperiod === index
-                      ? "bg-synblue text-synwhite"
-                      : "bg-zinc-300 hover:bg-zinc-600 hover:text-synwhite"
+                      ? "bg-synblue text-synwhite hover:bg-blue-600"
+                      : "bg-zinc-700 text-zinc-500"
                   }`}
                   onClick={() => !isloading && setpgPeriod(index)}
                 >
                   {data.discounts[index] !== 0 && (
-                    <span className="bg-syngold rounded p-[3px] text-synblack absolute right-1 top-1 text-[10px]">
+                    <span className=" bg-amber-300 rounded p-[3px] px-3 font-semibold text-amber-950 absolute right-[-10px] top-[-10px] text-[12px]">
                       {`${data.discounts[index]}% Off`}
                     </span>
                   )}
@@ -130,7 +133,7 @@ function PricingSection({ extid }) {
               );
             })}
           </div>
-          <div className="flex flex-row gap-3 flex-wrap mt-10">
+          <div className="flex flex-row gap-3 flex-wrap mt-10 w-full justify-center ">
             {data.packages.map((item, index) => {
               return (
                 <motion.div
@@ -142,9 +145,9 @@ function PricingSection({ extid }) {
                     ease: "backInOut",
                   }}
                   key={index}
-                  className={`w-[460px] border-2 border-solid relative flex-grow flex flex-col ${
+                  className={`w-[460px] border-2 border-solid relative flex-grow md:flex-grow-0  flex flex-col ${
                     item.popular
-                      ? "border-synblue bg-blue-800"
+                      ? "border-blue-400 bg-gradient-to-tr from-blue-800 to-blue-600"
                       : "border-zinc-600"
                   } rounded p-4`}
                 >
@@ -153,7 +156,15 @@ function PricingSection({ extid }) {
                       Most Popular
                     </span>
                   )}
-                  <h2 className="m-0 p-0">{item.name}</h2>
+                  <div className="flex justify-between">
+                    <h2 className="m-0 p-0">{item.name}</h2>
+                    {item.popular && (
+                      <span class="relative flex h-4 w-4 justify-center items-center">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-200 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500 drop-shadow"></span>
+                      </span>
+                    )}
+                  </div>
                   <h4 className="m-0 p-0 font-normal mb-4">{item.tagline}</h4>
                   <label htmlFor="" className="block">
                     <span>$ </span>
@@ -172,22 +183,39 @@ function PricingSection({ extid }) {
                       Subscribed
                     </button>
                   ) : (
-                    <button
-                      onClick={() =>
-                        purchase(item.pricing[pgperiod].identifier)
-                      }
-                      className="w-full mt-4 h-[60px] mb-9 hover:scale-[1.02] flex flex-row gap-2 items-center justify-center"
-                    >
-                      {isloading &&
-                      item.pricing[pgperiod].identifier === selected ? (
-                        <>
-                          Processing{" "}
-                          <LoadingDots width={22} fill="var(--synblack)" />
-                        </>
-                      ) : (
-                        "Subscribe Now"
-                      )}
-                    </button>
+                    <div className="mt-4 mb-9">
+                      <Tooltip
+                        text={item.popular ? "Go Ahead! Unlock the Best!" : ""}
+                      >
+                        <button
+                          onClick={() =>
+                            purchase(item.pricing[pgperiod].identifier)
+                          }
+                          className={twMerge(
+                            "w-full  h-[60px] hover:scale-[1.02] flex flex-row gap-2 items-center justify-center",
+                            item.popular &&
+                              "hover:bg-gradient-to-tr hover:from-blue-500 hover:to-blue-400 hover:text-white"
+                          )}
+                        >
+                          {isloading &&
+                          item.pricing[pgperiod].identifier === selected ? (
+                            <>
+                              Processing{" "}
+                              <LoadingDots width={22} fill="var(--synblack)" />
+                            </>
+                          ) : (
+                            <>
+                              <span>Subscribe Now</span>
+                              {item.popular && (
+                                <span>
+                                  <IconRocket size={25} />
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </button>
+                      </Tooltip>
+                    </div>
                   )}
                   <label htmlFor="">
                     {item.limited
@@ -235,7 +263,7 @@ function PricingSection({ extid }) {
                 delay: 0.2 * data.packages.length,
                 ease: "backInOut",
               }}
-              className="flex flex-row gap-2 flex-wrap justify-center items-start"
+              className="flex flex-row gap-2 "
             >
               <div
                 className={`w-[460px] border-2 border-solid relative flex-grow h-[100%] flex flex-col border-zinc-600  rounded p-4`}
@@ -256,12 +284,16 @@ function PricingSection({ extid }) {
                 </span>
               </label>
               <h4 className="mt-4">{item.additional}</h4> */}
-                <button
-                  onClick={() => push(`/sales/${extid}`)}
-                  className="w-full mt-4 h-[60px] mb-9 hover:scale-[1.02] flex flex-row gap-2 items-center justify-center"
-                >
-                  Contact Sales
-                </button>
+                <div className="mt-4 mb-9">
+                  <Tooltip text={"Go Ahead! Unlock the Best With Your Team!"}>
+                    <button
+                      onClick={() => push(`/sales/${extid}`)}
+                      className="w-full  h-[60px]  hover:scale-[1.02] flex flex-row gap-2 items-center justify-center"
+                    >
+                      Contact Sales
+                    </button>
+                  </Tooltip>
+                </div>
                 <label htmlFor="">Comes With All Features Unlocked</label>
                 <div className="flex flex-col mt-5 gap-3">
                   <label htmlFor="" className={`flex flex-row gap-2 `}>

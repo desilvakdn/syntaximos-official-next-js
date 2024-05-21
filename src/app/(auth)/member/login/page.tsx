@@ -32,7 +32,9 @@ function Login() {
   });
   const [emailwp, setemailwp] = useState("");
 
-  async function submit() {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     setProperties({ ...properties, issubmitclicked: true });
 
     if (!executeRecaptcha) {
@@ -112,19 +114,16 @@ function Login() {
 
   function sendpasswordreset() {
     setProperties({ ...properties, ispassresetclicked: true });
-    if (
-      properties.ispasswordresetsending ||
-      !properties.passresetemail ||
-      !emailwp
-    ) {
+    if (properties.ispasswordresetsending || !properties.passresetemail) {
       return;
     }
+    console.log("hi");
     setProperties({ ...properties, ispasswordresetsending: true });
 
     fetchPost(
       "auth/forgotpassword",
       {
-        email: properties.passresetemail || emailwp,
+        email: properties.passresetemail,
       },
       true
     ).then((data) => {
@@ -230,7 +229,10 @@ function Login() {
             <p className="px-[10px] text-center">
               Enter your credentials to login to your account
             </p>
-            <div className="SlideIn0 w-full  mt-4 flex flex-col gap-2 justify-center items-center">
+            <form
+              className="SlideIn0 w-full  mt-4 flex flex-col gap-2 justify-center items-center"
+              onSubmit={submit}
+            >
               <input
                 className={`${
                   properties.issubmitclicked && !properties.email
@@ -271,7 +273,8 @@ function Login() {
                 Forgot Password ?
               </label>
               <button
-                onClick={submit}
+                type="submit"
+                disabled={properties.isloading}
                 className="w-full flex flex-row gap-2 items-center justify-center bg-synblue text-synwhite hover:bg-blue-950 hover:text-synwhite py-[15px]"
               >
                 {properties.isloading ? (
@@ -293,7 +296,7 @@ function Login() {
                   </>
                 )}
               </button>
-            </div>
+            </form>
           </div>
           <label htmlFor="" className="py-3">
             Or

@@ -75,7 +75,8 @@ function Register() {
     }
   }, [formdata.email]);
 
-  async function submit() {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     if (isloading) return;
 
     setisloading(true);
@@ -158,7 +159,10 @@ function Register() {
         <p className="px-[15px] text-center">
           Fill the following form with correct details to become a syntaximos
         </p>
-        <div className="SlideIn0 min-w-[95%] md:min-w-[600px] mt-4 flex flex-col gap-2 justify-center items-center">
+        <form
+          onSubmit={submit}
+          className="SlideIn0 min-w-[95%] md:min-w-[600px] mt-4 flex flex-col gap-2 justify-center items-center"
+        >
           <div className="w-full flex flex-col md:flex-row gap-2 ">
             <input
               className={`${
@@ -281,7 +285,8 @@ function Register() {
             />
           </div>
           <button
-            onClick={submit}
+            type="submit"
+            disabled={isloading}
             className={`w-full flex flex-row gap-2 items-center justify-center py-[15px] ${
               isloading
                 ? "bg-slate-300 text-slate-600 hover:bg-slate-300 hover:text-slate-600 cursor-default"
@@ -297,7 +302,7 @@ function Register() {
               "Register Acccount"
             )}
           </button>
-        </div>
+        </form>
         <label htmlFor="" className="py-3">
           Or
         </label>

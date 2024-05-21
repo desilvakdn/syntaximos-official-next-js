@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import "./css/hero_section.css";
 import { Play } from "@phosphor-icons/react";
+import Link from "next/link";
 
 interface Extension {
   rating: number;
@@ -193,15 +194,16 @@ function HeroExtensionSection({ data }: { data: Extension }) {
             >
               Install Now
             </motion.button>
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3, delay: 1, ease: "backInOut" }}
-              className="bg-amber-200 text-amber-900 p-2 px-4 rounded hover:bg-amber-300 hover:text-amber-950"
-              onClick={() => push(`/extensions/pricing/${data.identifier}`)}
-            >
-              Get Premium
-            </motion.button>
+            <Link href={"#pricingsectionmiddle"}>
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3, delay: 1, ease: "backInOut" }}
+                className="bg-amber-200 h-full text-amber-900 p-2 px-4 rounded hover:bg-amber-300 hover:text-amber-950"
+              >
+                Get Premium
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
         {launchvideo && (

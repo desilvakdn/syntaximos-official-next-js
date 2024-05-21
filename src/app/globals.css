@@ -15,7 +15,21 @@ html {
 }
 
 body {
-  background-color: #101010;
+  background-image: linear-gradient(
+    to bottom,
+    #101010,
+    #131313,
+    #161616,
+    #181818,
+    #1b1b1b,
+    #1b1b1b,
+    #1b1b1b,
+    #1b1b1b,
+    #181818,
+    #161616,
+    #131313,
+    #101010
+  );
   color: #ffffff;
   font-weight: 600;
 
