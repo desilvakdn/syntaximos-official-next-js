@@ -1,25 +1,31 @@
 export interface OfferCardTypes {
-  extensionid: String;
-  packageidentifier: String;
+  extensionid: string;
+  extensionname: string;
+  extensionicon: string;
+  packageidentifier: string;
+  packagename: string;
+  observed: boolean;
+  offerstarted: string;
+  timenow: string;
   offer: {
-    name: String;
-    amount: String;
-    percent_off: Number;
-    amount_off: Number;
-    message: String;
-    expire_duration: Number;
+    name: string;
+    amount: string;
+    percent_off: number;
+    amount_off: number;
+    message: string;
+    expire_duration: number;
     max_redemptions: {
-      type: Number;
+      type: number;
       default: 1;
     };
     duration: {
-      type: String;
+      type: string;
       default: "once";
     };
   };
   eligibility: {
-    minspend: Number;
-    minagedays: Number;
+    minspend: number;
+    minagedays: number;
     ispremium: Boolean;
   };
 }

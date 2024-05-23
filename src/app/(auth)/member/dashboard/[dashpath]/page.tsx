@@ -33,7 +33,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
   const [ispremium, setIspremium] = useState(false);
   const [opennews, setopennews] = useState(false);
   const path = usePathname();
-  const menuitems = [
+  const [menuitems, setmenuitems] = useState([
     {
       name: "Extensions",
       icon: <BoundingBox size={24} weight="bold" />,
@@ -64,7 +64,8 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
       url: "/member/dashboard/setting",
       identifier: "setting",
     },
-  ];
+  ]);
+  const [hasoffers, sethasoffers] = useState(0);
 
   let [hotnews, sethotnews] = useState({
     headline: "",
@@ -101,13 +102,19 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     },
   ]);
 
-  let class_ = `flex flex-row gap-2 items-center pl-7 cursor-pointer transition-all bg-zinc-800 p-3 hover:bg-synblue hover:p-3 rounded`;
-  let selectedclass_ = `flex flex-row gap-2 items-center justify-center transition-all bg-synblue p-3 rounded`;
+  let class_ = `flex flex-row gap-2 items-center pl-7 cursor-pointer transition-all bg-zinc-800 p-3 hover:bg-synblue hover:p-3 rounded relative`;
+  let selectedclass_ = `flex flex-row gap-2 items-center justify-center transition-all bg-synblue p-3 rounded relative`;
 
   useEffect(() => {
     fetchGet(`dashboard/firstname`, true).then((data) => {
       if (data.status) {
         setFirstname(data.data);
+      }
+    });
+
+    fetchGet(`user/offer/eligibility`, true).then((e) => {
+      if (e.status && e.data && e.data > 0) {
+        sethasoffers(e.data);
       }
     });
   }, []);
@@ -336,6 +343,16 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
                   }
                 >
                   {item.icon} {item.name}
+                  {hasoffers > 0 && item.identifier === "myoffers" && (
+                    <div className="absolute right-[0px] top-0">
+                      <span className="relative flex ">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-full w-full bg-sky-500 justify-center items-center px-2">
+                          {1}
+                        </span>
+                      </span>
+                    </div>
+                  )}
                 </label>
               );
             })}
