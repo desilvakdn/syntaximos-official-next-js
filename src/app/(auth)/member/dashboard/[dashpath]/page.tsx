@@ -66,6 +66,7 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     },
   ]);
   const [hasoffers, sethasoffers] = useState(0);
+  const [isProductHunt, setisProductHunt] = useState(false);
 
   let [hotnews, sethotnews] = useState({
     headline: "",
@@ -115,6 +116,14 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
     fetchGet(`user/offer/eligibility`, true).then((e) => {
       if (e.status && e.data && e.data > 0) {
         sethasoffers(e.data);
+      }
+    });
+
+    fetchGet(`web/producthunt`, true).then((l) => {
+      if (l.status && l.switch) {
+        setisProductHunt(true);
+      } else {
+        setisProductHunt(false);
       }
     });
   }, []);
@@ -357,6 +366,27 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               );
             })}
           </div>
+          {isProductHunt && (
+            <div className="relative py-3 px-2 border-[2px] border-dashed border-zinc-500 rounded">
+              <span className="flex h-3 w-3 pointer-events-none absolute -top-2 -right-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-400"></span>
+              </span>
+              <label htmlFor="">
+                Fiverr Mate is live on Product Hunt. We need Your help!
+              </label>
+              <div className="w-full h-[20px]"></div>
+              <div
+                className="animate-bounce"
+                dangerouslySetInnerHTML={{
+                  __html: `<a href="https://www.producthunt.com/posts/fiverr-mate?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fiverr&#0045;mate" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=459165&theme=light" alt="Fiverr&#0032;Mate - Fiverr&#0032;Gig&#0032;SEO&#0032;Tool&#0032;&#0032;To&#0032;Rank&#0032;Higher&#0032;on&#0032;Fiverr&#0032;with&#0032;SEO&#0033; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>`,
+                }}
+              ></div>
+              <label htmlFor="" className="text-justify">
+                Put your Upvote 👆 & show your ❤️ with Fiverr Mate
+              </label>
+            </div>
+          )}
           <div className="flex flex-col gap-2 text-center  rounded">
             <label
               onClick={() => push(menuitems[menuitems.length - 1].url)}
@@ -395,7 +425,9 @@ function DashboardItems({ params }: { params: { dashpath: "" } }) {
               </button>
             </div>
             <div className="flex flex-row gap-4 items-center">
-              <label htmlFor="">{`Hi ${firstname}`}</label>
+              <div className="flex flex-row gap-2 items-center">
+                <label htmlFor="">{`Hi ${firstname}`}</label>
+              </div>
               {ispremium && (
                 <button
                   className="flex flex-row gap-1 items-center"
